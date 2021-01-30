@@ -1,7 +1,12 @@
-import time,requests
+import requests
+import time
 
-class ErrorHandler:
-	safe_url = "http://localhost:5050/swagger/index.html"
+
+class ConnectionHandler:
+	"""
+	This
+	"""
+	safe_url = "http://localhost:5050/"
 
 	def __init__(self,api):
 		self.api = api
@@ -9,13 +14,13 @@ class ErrorHandler:
 	def wait_for_initialized_game(self):
 		while True:
 			try:
+				time.sleep(1)
 				self.api.games.get_game().body[0]
 				return
 			except (IndexError,TypeError):
 				print("Game has not been initialized")
-				time.sleep(1)
 
-	def wait_for_internet_connection(self):
+	def wait_for_api_availability(self):
 		while True:
 			try:
 				time.sleep(1)

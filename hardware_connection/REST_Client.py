@@ -1,11 +1,14 @@
 from simple_rest_client.api import API
-from Resources import GamesResource, PlayersResource, EventsResource, MapResource, RobotsResource
-from ErrorHandler import *
+from ConnectionHandler import *
+from ResourceHandler import ResourceHandler
+
+
+# AWAIT testen ob ähnlich wie while T
 
 class RestReceiver:
 	"""
 	This class provides the interface between the REST API and
-	the Raspberry Pi, which retrieves the data.
+	the Raspberry Pi, which retrieves and processes the data.
 	"""
 
 	# The root URL for the REST API
@@ -26,42 +29,25 @@ class RestReceiver:
 		method.
 		"""
 		self.api = API(api_root_url=self.api_root_url, json_encode_body=True)
-		handler = ErrorHandler(self.api)
-		self.add_resources()
-		handler.wait_for_internet_connection()
-		handler.wait_for_initialized_game()
-		self.game_id = self.get_game()
-		self.players = self.get_players()
-		status = self.get_game_status()
+		connection_handler = ConnectionHandler(self.api)
+		resource_handler = ResourceHandler(self.api)
+		resource_handler.add_resources()
+		connection_handler.wait_for_api_availability()
+		connection_handler.wait_for_initialized_game()
+		self.game_id = resource_handler.get_game()
+		self.players = resource_handler.get_players(self.game_id)
+		status = resource_handler.get_game_state(self.game_id)
 		print(status)
-		if status["state"] == self.game_started:
-			self.start_game()
+		user_token = resource_handler.create_consumer(self.game_id)
+		print(user_token)
+		while resource_handler.get_game_state(self.game_id) != self.game_started:
+			print("Not started")
+			time.sleep(2)
 
+		#self.start_game(user_token["pat"])
 
-
-
-
-	def get_game(self):
-		return self.api.games.get_game().body[0]
-
-	def get_players(self):
-		return self.api.players.get_players(self.game_id).body
-
-	def get_player(self):
-		return self.api.players.get_player(self.game_id, self.api.players.get_players(self.game_id).body)
-
-	def get_game_status(self):
-		return self.api.games.get_game_status(self.game_id).body
-
-	def add_resources(self):
-		self.api.add_resource(resource_name='games', resource_class=GamesResource)
-		self.api.add_resource(resource_name='players', resource_class=PlayersResource)
-		self.api.add_resource(resource_name='events', resource_class=EventsResource)
-		self.api.add_resource(resource_name='maps', resource_class=MapResource)
-		self.api.add_resource(resource_name='robots', resource_class=RobotsResource)
-
-	def start_game(self):
-		event = self.api.events.get_event_head(self.game_id)
+	def start_game(self, token):
+		event = self.api.events.get_event_head(self.game_id, self.game_id, token)
 		print(event)
 
 
