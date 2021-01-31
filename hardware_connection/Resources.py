@@ -38,7 +38,7 @@ class EventsResource(Resource):
 	This
 	"""
 	actions = {
-		"get_event_head": {"method": "GET", "url": "games/{}/events/head?gameid={}?pat={}"},
+		"get_event_head": {"method": "GET", "url": "games/{}/events/head?pat={}"},
 		# Get the latest event - you receive all events over this endpoint
 	}
 

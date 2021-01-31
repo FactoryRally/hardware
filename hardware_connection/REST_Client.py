@@ -29,9 +29,9 @@ class RestReceiver:
 		method.
 		"""
 		self.api = API(api_root_url=self.api_root_url, json_encode_body=True)
-		connection_handler = ConnectionHandler(self.api)
 		resource_handler = ResourceHandler(self.api)
 		resource_handler.add_resources()
+		connection_handler = ConnectionHandler(self.api)
 		connection_handler.wait_for_api_availability()
 		connection_handler.wait_for_initialized_game()
 		self.game_id = resource_handler.get_game()
@@ -40,14 +40,13 @@ class RestReceiver:
 		print(status)
 		user_token = resource_handler.create_consumer(self.game_id)
 		print(user_token)
-		while resource_handler.get_game_state(self.game_id) != self.game_started:
-			print("Not started")
-			time.sleep(2)
+		connection_handler.wait_for_running_game(self.game_id,resource_handler)
 
-		#self.start_game(user_token["pat"])
+
+		self.start_game(user_token["pat"])
 
 	def start_game(self, token):
-		event = self.api.events.get_event_head(self.game_id, self.game_id, token)
+		event = self.api.events.get_event_head(self.game_id, token)
 		print(event)
 
 

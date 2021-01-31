@@ -10,6 +10,12 @@ class ConnectionHandler:
 
 	def __init__(self,api):
 		self.api = api
+		self.game_started = 0
+
+	def wait_for_running_game(self,game_id,resource_handler):
+		while resource_handler.get_game_state(game_id) != self.game_started:
+			print("Not started")
+			time.sleep(2)
 
 	def wait_for_initialized_game(self):
 		while True:
