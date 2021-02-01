@@ -1,7 +1,7 @@
 from simple_rest_client.api import API
 from ConnectionHandler import *
 from ResourceHandler import ResourceHandler
-
+from urllib.parse import urlencode
 
 # AWAIT testen ob ähnlich wie while T
 
@@ -34,20 +34,19 @@ class RestReceiver:
 		connection_handler = ConnectionHandler(self.api)
 		connection_handler.wait_for_api_availability()
 		connection_handler.wait_for_initialized_game()
+
 		self.game_id = resource_handler.get_game()
+		print(self.game_id)
 		self.players = resource_handler.get_players(self.game_id)
 		status = resource_handler.get_game_state(self.game_id)
 		print(status)
 		user_token = resource_handler.create_consumer(self.game_id)
-		print(user_token)
 		connection_handler.wait_for_running_game(self.game_id,resource_handler)
-
-
 		self.start_game(user_token["pat"])
 
-	def start_game(self, token):
-		event = self.api.events.get_event_head(self.game_id, token)
-		print(event)
+	def start_game(self,token):
+		while True:
+			print(self.api.events.get_event_head(self.game_id,token))
 
 
 if __name__ == '__main__':
