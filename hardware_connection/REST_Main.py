@@ -11,12 +11,16 @@ class Main:
 	api_root_url = "http://localhost:5050/v1/"
 
 	def __init__(self):
+		"""
+		The init function initiates an API object and generates a RestReceiver.
+		:param api:
+		"""
 		self.api = API(api_root_url=self.api_root_url, json_encode_body=True)
 		self.resource_handler = ResourceHandler(self.api)
 		self.connection_handler = ConnectionHandler(self.api)
-		self.generate_games()
+		self.generate_game()
 
-	def generate_games(self):
+	def generate_game(self):
 		"""
 		This function generates REST Receivers for each game thats currently running ("LOBBY" status).
 		:return:

@@ -3,7 +3,7 @@ from simple_rest_client.resource import Resource
 
 class GamesResource(Resource):
 	"""
-	This
+	This class represents all resources which represent the games endpoint.
 	"""
 	actions = {
 		"get_game": {"method": "GET", "url": "games"},  # Used to get game meta information
@@ -15,7 +15,7 @@ class GamesResource(Resource):
 
 class PlayersResource(Resource):
 	"""
-	This
+	This class represents all resources which represent the players endpoint.
 	"""
 	actions = {
 		"get_players": {"method": "GET", "url": "games/{}/players"},  # Get all connected players
@@ -26,7 +26,7 @@ class PlayersResource(Resource):
 
 class ConsumersResource(Resource):
 	"""
-	This
+	This class represents all resources which represent the consumer endpoint.
 	"""
 	actions = {
 		"create_consumer": {"method": "POST", "url": "games/{}/consumers"}
@@ -35,7 +35,7 @@ class ConsumersResource(Resource):
 
 class EventsResource(Resource):
 	"""
-	This
+	This class represents all resources which represent the event handling endpoint.
 	"""
 	actions = {
 		"get_event_head": {"method": "GET", "url": "games/{}/events/head?pat={}"},
@@ -45,7 +45,7 @@ class EventsResource(Resource):
 
 class RobotsResource(Resource):
 	"""
-	This
+	This class represents all resources which represent the robots endpoint.
 	"""
 	actions = {
 		"get_all_robots": {"method": "GET", "url": "games/{}/entitys/robots"},  # Get all given robots
@@ -58,7 +58,7 @@ class RobotsResource(Resource):
 
 class MapResource(Resource):
 	"""
-	This
+	This class represents all resources which represent the maps endpoint.
 	"""
 	actions = {
 		"get_map": {"method": "GET", "url": "games/{}/map"},  # Receive map info
