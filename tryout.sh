@@ -4,3 +4,4 @@ gameid=$(curl -X POST "http://localhost:5050/v1/games" -H "accept: */*" -H "Cont
 echo "$gameid"
 gameid2=$(curl -X POST "http://localhost:5050/v1/games/$gameid/players" -H "accept: text/plain")
 echo "$gameid2"
+

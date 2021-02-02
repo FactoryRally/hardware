@@ -1,9 +1,8 @@
-from simple_rest_client.api import API
-from ConnectionHandler import *
-from ResourceHandler import ResourceHandler
-from urllib.parse import urlencode
+from urllib.parse import quote_plus
+import time
+import sys
+from simple_rest_client.exceptions import ServerError, NotFoundError
 
-# AWAIT testen ob ähnlich wie while T
 
 class RestReceiver:
 	"""
@@ -23,15 +22,15 @@ class RestReceiver:
 	]
 	game_started = 0
 
-	def __init__(self):
+	def __init__(self, api, res, conn):
 		"""
 		This function initializes the REST client and the game as well as it starts the whole
 		method.
 		"""
-		self.api = API(api_root_url=self.api_root_url, json_encode_body=True)
-		resource_handler = ResourceHandler(self.api)
+		self.api = api
+		resource_handler = res
 		resource_handler.add_resources()
-		connection_handler = ConnectionHandler(self.api)
+		connection_handler = conn
 		connection_handler.wait_for_api_availability()
 		connection_handler.wait_for_initialized_game()
 
@@ -39,14 +38,27 @@ class RestReceiver:
 		print(self.game_id)
 		self.players = resource_handler.get_players(self.game_id)
 		status = resource_handler.get_game_state(self.game_id)
-		print(status)
 		user_token = resource_handler.create_consumer(self.game_id)
-		connection_handler.wait_for_running_game(self.game_id,resource_handler)
+		if not status == "game start":
+			connection_handler.wait_for_running_game(self.game_id, resource_handler)
 		self.start_game(user_token["pat"])
 
-	def start_game(self,token):
+	def start_game(self, token):
+		counter = 0
 		while True:
-			print(self.api.events.get_event_head(self.game_id,token))
+			try:
+				print(self.api.events.get_event_head(self.game_id, quote_plus(token)).body["type"])
+			except ServerError:
+				if token:
+					print("You have no active consumer on the current game. \nYou need to restart the game!")
+					if counter == 8: sys.exit()
+					counter += 1
+				else:
+					print("ERROR")
+				time.sleep(1)
+			except NotFoundError as ex_n:
+				print("Caught exception {}".format(ex_n.__str__()))
+				time.sleep(1)
 
 
 if __name__ == '__main__':
