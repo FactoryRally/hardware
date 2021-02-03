@@ -29,12 +29,12 @@ class ResourceHandler:
 		self.api.add_resource(resource_name='robots', resource_class=RobotsResource)
 		self.api.add_resource(resource_name='consumers', resource_class=ConsumersResource)
 
-	def get_game(self):
+	def get_games(self):
 		"""
 		This function returns all currently active games.
 		:return: the game ids of all active games
 		"""
-		return self.api.games.get_game().body[0]
+		return self.api.games.get_games().body
 
 	def get_players(self, game_id):
 		"""
@@ -52,13 +52,14 @@ class ResourceHandler:
 		"""
 		return self.api.players.get_player(game_id, self.api.players.get_players(game_id).body)
 
-	def get_game_state(self, game_id):
+	def get_game_state(self, game_id, user_token):
 		"""
 		This function returns the current state of the given game.
+		:param user_token:
 		:param game_id: the game identifier
 		:return: state of the game
 		"""
-		return self.api.games.get_game_status(game_id).body["state"]
+		return self.api.games.get_game_status(game_id, user_token).body["state"]
 
 	def create_consumer(self, game_id):
 		"""
@@ -79,8 +80,27 @@ class ResourceHandler:
 		while True:
 			try:
 				self.api.events.get_event_head(game_id, quote_plus(user_token)).body["type"]
-			except ServerError:
+			except ServerError as ex:
+				print(ex.__str__())
 				print("You have no active consumer on the current game. \nYou need to restart the game!")
 			except NotFoundError as ex_n:
 				print("Caught exception {}".format(ex_n.__str__()))
 			time.sleep(2)
+
+	def get_event_head(self, game_id, user_token):
+		"""
+		This
+		:param game_id:
+		:param user_token:
+		:return:
+		"""
+		return self.api.events.get_event_head(game_id, user_token)
+
+	def get_new_games(self, current_games):
+		"""
+		This
+		:param current_games:
+		:return:
+		"""
+		new_games = self.get_games()
+		return list(set(new_games) ^ set(current_games))

@@ -22,7 +22,7 @@ class RestReceiver:
 	]
 	playing_state = "PLAYING"
 
-	def __init__(self, api, res, conn):
+	def __init__(self, api, res, conn, game_id):
 		"""
 		This function initializes the REST client and the game. Furthermore it performs checks if the game is in the
 		right state and registers a consumer to consume the event endpoint.
@@ -33,14 +33,13 @@ class RestReceiver:
 		connection_handler.wait_for_api_availability()
 		connection_handler.wait_for_initialized_game()
 
-		self.game_id = resource_handler.get_game()
-		print(self.game_id)
+		self.game_id = game_id
 		self.players = resource_handler.get_players(self.game_id)
-		self.user_token = resource_handler.create_consumer(self.game_id)
-		if resource_handler.get_game_state(self.game_id) != self.playing_state:
+		self.user_token = quote_plus(str(resource_handler.create_consumer(self.game_id)["pat"]))
+		if resource_handler.get_game_state(self.game_id, quote_plus(str(self.user_token))) != self.playing_state:
 			connection_handler.wait_for_running_game(self.game_id, resource_handler)
-		print(resource_handler.get_game_state(self.game_id))
-		resource_handler.check_if_consumer_is_registered(self.game_id, self.user_token["pat"])
+		print(resource_handler.get_game_state(self.game_id, quote_plus(self.user_token)))
+		resource_handler.check_if_consumer_is_registered(self.game_id, self.user_token)
 
 
 	def start_game(self):
@@ -50,7 +49,7 @@ class RestReceiver:
 		"""
 		while True:
 			try:
-				print(self.api.events.get_event_head(self.game_id, quote_plus(self.user_token)).body["type"])
+				print(self.api.events.get_event_head(self.game_id, self.user_token).body["type"])
 			except NotFoundError as ex_n:
 				print("Caught exception {}".format(ex_n.__str__()))
 				time.sleep(1)

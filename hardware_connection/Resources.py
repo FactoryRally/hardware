@@ -6,8 +6,8 @@ class GamesResource(Resource):
 	This class represents all resources which represent the games endpoint.
 	"""
 	actions = {
-		"get_game": {"method": "GET", "url": "games"},  # Used to get game meta information
-		"get_game_status": {"method": "GET", "url": "games/{}/status"},  # Get the status of the running game
+		"get_games": {"method": "GET", "url": "games"},  # Used to get game meta information
+		"get_game_status": {"method": "GET", "url": "games/{}/status?pat={}"},  # Get the status of the running game
 		"get_game_actions": {"method": "GET", "url": "games/{}/actions"}  # Get game actions (no actions related to
 		# Players are returned)
 	}

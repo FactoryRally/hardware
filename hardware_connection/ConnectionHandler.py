@@ -33,14 +33,14 @@ class ConnectionHandler:
 		This function waits until a game is initialized.
 		:return:
 		"""
-		while not self.api.games.get_game().body:
+		while not self.api.games.get_games().body:
 			print("Game has not been initialized")
 			time.sleep(1)
 		return
 
 	def wait_for_api_availability(self):
 		"""
-		This function waits until the API is reachable. 
+		This function waits until the API is reachable.
 		:return:
 		"""
 		while True:
