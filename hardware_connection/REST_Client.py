@@ -1,7 +1,6 @@
 from urllib.parse import quote_plus
 import time
-import sys
-from simple_rest_client.exceptions import ServerError, NotFoundError
+from simple_rest_client.exceptions import NotFoundError
 
 
 class RestReceiver:
@@ -10,8 +9,6 @@ class RestReceiver:
 	the Raspberry Pi, which retrieves and processes the data.
 	"""
 
-	# The root URL for the REST API
-	api_root_url = "http://localhost:5050/v1/"
 	# The different Event Types
 	event_types = [
 		"movement", "upgrade purchase", "fill register", "activate upgrade", "lazer shot",
@@ -20,27 +17,26 @@ class RestReceiver:
 		"game_phase_changed", "game_round_phase_changed", "pause", "unpause", "damage", "lazer hit",
 		"push", "join", "lock in", "robot_start_executing", "heal", "energy gain"
 	]
-	playing_state = "PLAYING"
+	# state of game
+	PLAYING_STATE = "PLAYING"
 
-	def __init__(self, api, res, conn, game_id):
+	def __init__(self, res, conn, game_id):
 		"""
 		This function initializes the REST client and the game. Furthermore it performs checks if the game is in the
 		right state and registers a consumer to consume the event endpoint.
 		"""
-		self.api = api
-		resource_handler = res
-		connection_handler = conn
-		connection_handler.wait_for_api_availability()
-		connection_handler.wait_for_initialized_game()
+		self.resource_handler = res
+		self.connection_handler = conn
+		self.connection_handler.wait_for_api_availability()
+		self.connection_handler.wait_for_initialized_game()
 
 		self.game_id = game_id
-		self.players = resource_handler.get_players(self.game_id)
-		self.user_token = quote_plus(str(resource_handler.create_consumer(self.game_id)["pat"]))
-		if resource_handler.get_game_state(self.game_id, quote_plus(str(self.user_token))) != self.playing_state:
-			connection_handler.wait_for_running_game(self.game_id, resource_handler)
-		print(resource_handler.get_game_state(self.game_id, quote_plus(self.user_token)))
-		resource_handler.check_if_consumer_is_registered(self.game_id, self.user_token)
-
+		self.players = self.resource_handler.get_players(self.game_id)
+		self.user_token = quote_plus(str(self.resource_handler.create_consumer(self.game_id)["pat"]))
+		if self.resource_handler.get_game_state(self.game_id, quote_plus(str(self.user_token))) != self.PLAYING_STATE:
+			self.connection_handler.wait_for_running_game(self.game_id, self.resource_handler)
+		print(self.resource_handler.get_game_state(self.game_id, quote_plus(self.user_token)))
+		self.resource_handler.check_if_consumer_is_registered(self.game_id, self.user_token)
 
 	def start_game(self):
 		"""
@@ -49,7 +45,7 @@ class RestReceiver:
 		"""
 		while True:
 			try:
-				print(self.api.events.get_event_head(self.game_id, self.user_token).body["type"])
+				print(self.resource_handler.get_event_head(self.game_id, self.user_token))
 			except NotFoundError as ex_n:
 				print("Caught exception {}".format(ex_n.__str__()))
 				time.sleep(1)
