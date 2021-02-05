@@ -33,9 +33,9 @@ class RestReceiver:
 		self.game_id = game_id
 		self.players = self.resource_handler.get_players(self.game_id)
 		self.user_token = quote_plus(str(self.resource_handler.create_consumer(self.game_id)["pat"]))
-		if self.resource_handler.get_game_state(self.game_id, quote_plus(str(self.user_token))) != self.PLAYING_STATE:
-			self.connection_handler.wait_for_running_game(self.game_id, self.resource_handler)
-		print(self.resource_handler.get_game_state(self.game_id, quote_plus(self.user_token)))
+		if self.resource_handler.get_game_state(self.game_id, self.user_token) != self.PLAYING_STATE:
+			self.connection_handler.wait_for_running_game(self.game_id, self.resource_handler, self.user_token)
+		print(self.resource_handler.get_game_state(self.game_id, self.user_token))
 		self.resource_handler.check_if_consumer_is_registered(self.game_id, self.user_token)
 
 	def start_game(self):

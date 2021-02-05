@@ -14,9 +14,6 @@ class MQTTSender:
 	topics = []
 	ids = []
 	discover_topic = "discover"
-	input_msg = measurement = {
-		"clients": 2,
-	}
 
 	def __init__(self):
 		"""

@@ -16,14 +16,14 @@ class ConnectionHandler:
 		self.api = api
 		self.game_started = 0
 
-	def wait_for_running_game(self, game_id, resource_handler):
+	def wait_for_running_game(self, game_id, resource_handler, user_token):
 		"""
 		This function waits until a game is started.
 		:param game_id: the given game
 		:param resource_handler: the resource handler
 		:return:
 		"""
-		while resource_handler.get_game_state(game_id) != self.game_started:
+		while resource_handler.get_game_state(game_id, user_token) != self.game_started:
 			print("Not started")
 			time.sleep(1)
 		return
