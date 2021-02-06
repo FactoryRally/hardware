@@ -22,6 +22,7 @@ class MQTTReceiver:
         """
         self.client = self.connect_mqtt()
         self.discover()
+        self.subscribe()
         self.client.loop_forever()
 
     def connect_mqtt(self) -> mqtt_client:
@@ -62,7 +63,6 @@ class MQTTReceiver:
             print(f"Failed to send message to {self.discover_topic}")
         self.client.unsubscribe(self.discover_topic)
         self.client.subscribe(self.client_id)
-        self.subscribe()
 
     def subscribe(self):
         """

@@ -1,5 +1,4 @@
 from urllib.parse import quote_plus
-import time
 from simple_rest_client.exceptions import NotFoundError
 
 
@@ -37,19 +36,40 @@ class RestReceiver:
 			self.connection_handler.wait_for_running_game(self.game_id, self.resource_handler, self.user_token)
 		print(self.resource_handler.get_game_state(self.game_id, self.user_token))
 		self.resource_handler.check_if_consumer_is_registered(self.game_id, self.user_token)
+		self._controlled_entities = self.generate_entity_mapping()
 
-	def start_game(self):
+	def generate_entity_mapping(self):
 		"""
-		This function starts the game process and handles interaction.
-		:return:
+		This function generates a dictionary containing the player id and the corresponding controlled entity.
+		:return: dict of entity mapping
 		"""
-		while True:
-			try:
-				print(self.resource_handler.get_event_head(self.game_id, self.user_token))
-			except NotFoundError as ex_n:
-				print("Caught exception {}".format(ex_n.__str__()))
-				time.sleep(1)
+		mapping = {}
+		for player in self.players:
+			mapping[self.resource_handler.get_controlled_entities(self.game_id, player)] = player
+
+		return mapping
+
+	def get_current_message(self):
+		"""
+		This function returns the latest (pop) game event message (JSON).
+		:return: current message
+		"""
+		try:
+			msg = self.resource_handler.get_event_head(self.game_id, self.user_token)
+			topic = self.evaluate_correct_topic(msg)
+			return [msg, topic]
+		except NotFoundError as ex_n:
+			print("Caught exception {}".format(ex_n.__str__()))
+
+	def evaluate_correct_topic(self, msg):
+		"""
+		This function returns the corresponding topic of the given message.
+		"""
+		return self._controlled_entities[msg.entityID]
+
+	def get_controlled_entities(self):
+		return self._controlled_entities
 
 
 if __name__ == '__main__':
-	RestReceiver()
+	RestReceiver(None, None, None)

@@ -15,14 +15,15 @@ class MQTTSender:
 	ids = []
 	discover_topic = "discover"
 
-	def __init__(self):
+	def __init__(self, rest_receiver):
 		"""
 		This init function initiates the client connection and starts the main
 		logic of the sender.
 		"""
 		self.client = self.connect_mqtt()
+		self.RestReceiver = rest_receiver
 		self.discover_and_notify()
-		# publish(client)
+		self.publish()
 		self.client.loop_forever()
 
 	def connect_mqtt(self) -> mqtt_client:
@@ -59,8 +60,8 @@ class MQTTSender:
 			This function is the callback which gets called when a
 			message is received.
 			:param client: the client connection
-			:param userdata:
-			:param msg:
+			:param userdata: the submitted userdata
+			:param msg: received message
 			"""
 			# client.publish(client_id,msg.topic)
 			print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
@@ -68,7 +69,7 @@ class MQTTSender:
 			helper_topic = 1
 			# for x in topics: print("topics" + x)
 			print("length " + str(len(self.topics)))
-			if self.input_msg.get("clients") == len(self.topics):
+			if self.RestReceiver.get_controlled_entities() == len(self.topics):
 				for x in self.topics:
 					self.ids.append(helper_topic)
 					helper_topic += 1
@@ -85,19 +86,18 @@ class MQTTSender:
 		the according topic.
 		:return:
 		"""
-		msg = {"topic": "topic"}.__str__()
-		result = self.client.publish(self.discover_topic, msg)
+		msg, curr_topic = next(self.RestReceiver.get_current_message())
+		result = self.client.publish(curr_topic, msg)
 		result: [0, 1]
 		status = result[0]
 		if status == 0:
-			print(f"Send `{msg}` to `{self.discover_topic}`")
-			self.client.subscribe(self.discover_topic)
+			print(f"Send `{msg}` to `{curr_topic}`")
 		else:
-			print(f"Failed to send message to {self.discover_topic}")
+			print(f"Failed to send message to {curr_topic}")
 
 
 if __name__ == '__main__':
-	MQTTSender()
+	MQTTSender(None)
 
 #  for x in range(input_msg.get("number_of_clients")):
 #      msg = {f"discover @ client":f"`{x}`", "with topic":f"`{x}`"}.__str__()
