@@ -2,7 +2,6 @@ from simple_rest_client.api import API
 from ResourceHandler import ResourceHandler
 from ConnectionHandler import ConnectionHandler
 from REST_Client import RestReceiver
-import threading
 from sender import MQTTSender
 import time
 
@@ -26,6 +25,7 @@ class HardwareMain:
 		self.connection_handler.wait_for_api_availability()
 		self.connection_handler.wait_for_initialized_game()
 		self.games = self.resource_handler.get_games()
+		self.check_for_lobby_game()
 		self.threads = []
 		self.generate_threads(self.games)
 		self.check_for_new_games()
@@ -38,16 +38,10 @@ class HardwareMain:
 		for game in games:
 			print(game)
 			new_game = self.generate_game(game)
-			t = threading.Thread(target=self.generate_publisher(new_game))
-			t.start()
+			print("THREAD CREATED!")
+			t = MQTTSender(new_game)
+			t.run()
 			self.threads.append(t)
-
-	def generate_publisher(self, rest_client):
-		"""
-
-		:return:
-		"""
-		return MQTTSender(rest_client)
 
 	def generate_game(self, game_id):
 		"""
@@ -69,6 +63,10 @@ class HardwareMain:
 				self.generate_threads(new_games)
 				self.games = new_games
 			time.sleep(5)
+
+	def check_for_lobby_game(self):
+		if not self.games:
+			print("You need to start a game! There are only FINISHED matches running!")
 
 
 if __name__ == '__main__':

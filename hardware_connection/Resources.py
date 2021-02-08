@@ -7,7 +7,7 @@ class GamesResource(Resource):
 	"""
 	actions = {
 		"get_games": {"method": "GET", "url": "games"},  # Used to get game meta information
-		"get_game_status": {"method": "GET", "url": "games/{}/status?pat={}"},  # Get the status of the running game
+		"get_game_status": {"method": "GET", "url": "games/{}/status"},  # Get the status of the running game
 		"get_game_actions": {"method": "GET", "url": "games/{}/actions"}  # Get game actions (no actions related to
 		# Players are returned)
 	}
@@ -18,8 +18,8 @@ class PlayersResource(Resource):
 	This class represents all resources which represent the players endpoint.
 	"""
 	actions = {
-		"get_players": {"method": "GET", "url": "games/{}/players"},  # Get all connected players
-		"get_player": {"method": "GET", "url": "games/{}/players/{}"},  # Get the player information - controlled
+		"get_players": {"method": "GET", "url": "games/{}/players?pat={}"},  # Get all connected players
+		"get_player": {"method": "GET", "url": "games/{}/players/{}?pat={}"},  # Get the player information - controlled
 		# entities (robots)
 	}
 
@@ -48,10 +48,10 @@ class RobotsResource(Resource):
 	This class represents all resources which represent the robots endpoint.
 	"""
 	actions = {
-		"get_all_robots": {"method": "GET", "url": "games/{}/entitys/robots"},  # Get all given robots
-		"get_upgrades": {"method": "GET", "url": "games/{}/entitys/robots/{}/upgrades"},
+		"get_all_robots": {"method": "GET", "url": "games/{}/entities/robots?pat={}"},  # Get all given robots
+		"get_upgrades": {"method": "GET", "url": "games/{}/entities/robots/{}/upgrades"},
 		# Get the upgrades of a certain robot
-		"get_robot_info": {"method": "GET", "url": "games/{}/entitys/robots/{}/info"},
+		"get_robot_info": {"method": "GET", "url": "games/{}/entities/robots/{}/info"},
 		# Get information about a certain robot
 	}
 

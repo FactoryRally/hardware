@@ -11,7 +11,7 @@ class MQTTReceiver:
     broker = 'broker.emqx.io'
     port = 1883
     discover_topic = "discover"
-    topic = ""
+    topic = "general"
     # generate client ID with pub prefix randomly
     client_id = f'client-{random.randint(0, 10000)}'
 
@@ -84,7 +84,7 @@ class MQTTReceiver:
                 client.subscribe(topic)
                 print(f"subscribed to `{topic}`")
             else:
-                print("new")
+                print("Message is currently unacceptable!")
 
         self.client.on_message = on_message
 

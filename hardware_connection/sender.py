@@ -1,8 +1,10 @@
 from paho.mqtt import client as mqtt_client
 import random
+from threading import Thread
+import time
 
 
-class MQTTSender:
+class MQTTSender(Thread):
 	"""
 	This class is the MQTT Sender which pushes the current game event
 	to the broker on the according topic.
@@ -13,7 +15,7 @@ class MQTTSender:
 	client_id = f'python-mqtt-{random.randint(0, 10000)}'
 	topics = []
 	ids = []
-	discover_topic = "discover"
+	discover_topic = "general"
 
 	def __init__(self, rest_receiver):
 		"""
@@ -22,6 +24,14 @@ class MQTTSender:
 		"""
 		self.client = self.connect_mqtt()
 		self.RestReceiver = rest_receiver
+		print("DONE")
+		#self.player_id = player_id
+
+	def run(self):
+		"""
+
+		:return:
+		"""
 		self.discover_and_notify()
 		self.publish()
 		self.client.loop_forever()
@@ -65,17 +75,18 @@ class MQTTSender:
 			"""
 			# client.publish(client_id,msg.topic)
 			print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-			self.topics.append(eval(msg.payload.decode()).get("topic"))
-			helper_topic = 1
-			# for x in topics: print("topics" + x)
-			print("length " + str(len(self.topics)))
-			if self.RestReceiver.get_controlled_entities() == len(self.topics):
-				for x in self.topics:
-					self.ids.append(helper_topic)
-					helper_topic += 1
-					# print(helper_topic)
-					client.publish(x, {"topic": str(helper_topic)}.__str__())
-					print("HERE IS X " + x)
+			if not str(msg.payload.decode()).__contains__('type'):
+				self.topics.append(eval(msg.payload.decode())[2])
+				helper_topic = 1
+				# for x in topics: print("topics" + x)
+				print("length " + str(len(self.topics)))
+				if self.RestReceiver.get_controlled_entities() == len(self.topics):
+					for x in self.topics:
+						self.ids.append(helper_topic)
+						helper_topic += 1
+						# print(helper_topic)
+						client.publish(x, {"topic": str(helper_topic)}.__str__())
+						print("HERE IS X " + x)
 
 		self.client.subscribe(self.discover_topic)
 		self.client.on_message = on_message
@@ -86,14 +97,21 @@ class MQTTSender:
 		the according topic.
 		:return:
 		"""
-		msg, curr_topic = next(self.RestReceiver.get_current_message())
-		result = self.client.publish(curr_topic, msg)
-		result: [0, 1]
-		status = result[0]
-		if status == 0:
-			print(f"Send `{msg}` to `{curr_topic}`")
-		else:
-			print(f"Failed to send message to {curr_topic}")
+		while True:
+			resp = self.RestReceiver.get_current_message()
+			print(resp)
+			if resp is not None:
+				msg = resp[0]
+				curr_topic = resp[1]
+				result = self.client.publish(curr_topic, str(msg))
+				result: [0, 1]
+				status = result[0]
+				if status == 0:
+					print(f"Send `{msg}` to `{curr_topic}`")
+				else:
+					print(f"Failed to send message to {curr_topic}")
+
+			time.sleep(0.1)
 
 
 if __name__ == '__main__':
