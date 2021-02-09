@@ -24,13 +24,11 @@ class MQTTSender(Thread):
 		"""
 		self.client = self.connect_mqtt()
 		self.RestReceiver = rest_receiver
-		print("DONE")
-		#self.player_id = player_id
+		self.game_id = self.RestReceiver.game_id
 
 	def run(self):
 		"""
-
-		:return:
+		This function starts the game process and initiates the topics.
 		"""
 		self.discover_and_notify()
 		self.publish()
@@ -51,9 +49,9 @@ class MQTTSender(Thread):
 			:param rc: the response code
 			"""
 			if rc == 0:
-				print("Connected to MQTT Broker!")
+				print(f"[{self.game_id}]: Connected to MQTT Broker!")
 			else:
-				print("Failed to connect, return code %d\n", rc)
+				print(f"[{self.game_id}]: Failed to connect, return code %d\n", rc)
 
 		client = mqtt_client.Client(self.client_id)
 		client.on_connect = on_connect
@@ -65,6 +63,7 @@ class MQTTSender(Thread):
 		This method handles the discovery of all clients in the
 		current game.
 		"""
+
 		def on_message(client, userdata, msg):
 			"""
 			This method is the callback which gets called when a
@@ -74,19 +73,18 @@ class MQTTSender(Thread):
 			:param msg: received message
 			"""
 			# client.publish(client_id,msg.topic)
-			print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+			print(f"[{self.game_id}]: Received `{msg.payload.decode()}` from `{msg.topic}` topic")
 			if not str(msg.payload.decode()).__contains__('type'):
 				self.topics.append(eval(msg.payload.decode())[2])
 				helper_topic = 1
 				# for x in topics: print("topics" + x)
-				print("length " + str(len(self.topics)))
+				#print("length " + str(len(self.topics)))
 				if self.RestReceiver.get_controlled_entities() == len(self.topics):
 					for x in self.topics:
 						self.ids.append(helper_topic)
 						helper_topic += 1
-						# print(helper_topic)
+						print(f"[{self.game_id}]: {helper_topic}")
 						client.publish(x, {"topic": str(helper_topic)}.__str__())
-						print("HERE IS X " + x)
 
 		self.client.subscribe(self.discover_topic)
 		self.client.on_message = on_message
@@ -95,21 +93,20 @@ class MQTTSender(Thread):
 		"""
 		This method publishes the current message to the broker with
 		the according topic.
-		:return:
 		"""
 		while True:
 			resp = self.RestReceiver.get_current_message()
 			if resp is not None:
-				print(resp)
+				#print(resp)
 				msg = resp[0]
 				curr_topic = resp[1]
 				result = self.client.publish(curr_topic, str(msg))
 				result: [0, 1]
 				status = result[0]
 				if status == 0:
-					print(f"Send `{msg}` to `{curr_topic}`")
+					print(f"[{self.game_id}]: Send `{msg}` to `{curr_topic}`")
 				else:
-					print(f"Failed to send message to {curr_topic}")
+					print(f"[{self.game_id}]: Failed to send message to {curr_topic}")
 
 			time.sleep(1)
 

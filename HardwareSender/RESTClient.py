@@ -4,8 +4,7 @@ from simple_rest_client.exceptions import NotFoundError
 
 class RestReceiver:
 	"""
-	This class provides the interface between the REST API and
-	the Raspberry Pi, which retrieves and processes the data.
+	This class provides the interface to access the REST API and process the retrieved information.
 	"""
 
 	# The different Event Types
@@ -18,6 +17,7 @@ class RestReceiver:
 	]
 	# state of game
 	PLAYING_STATE = "PLAYING"
+	# Whether or not game is in EXECUTION
 	EXECUTION_PHASE = False
 	topic = "general"
 
@@ -32,14 +32,14 @@ class RestReceiver:
 		self.connection_handler.wait_for_initialized_game()
 		self.game_id = game_id
 		self.user_token = quote(str(self.resource_handler.create_consumer(self.game_id)["pat"]))
-		print(self.user_token)
+		print(f"[{self.game_id}]: {self.user_token}")
 		if self.resource_handler.get_game_state(self.game_id) != self.PLAYING_STATE:
 			self.connection_handler.wait_for_running_game(self.game_id, self.resource_handler)
 		self.players = self.resource_handler.get_players(self.game_id, self.user_token)
-		print(self.resource_handler.get_game_state(self.game_id))
+		print(f"[{self.game_id}]: {self.resource_handler.get_game_state(self.game_id)}")
 		self._controlled_entities = {}
 		self.generate_entity_mapping()
-		print(self._controlled_entities)
+		print(f"[{self.game_id}]: {self._controlled_entities}")
 
 	def generate_entity_mapping(self):
 		"""
@@ -57,19 +57,17 @@ class RestReceiver:
 		This method returns the latest (pop) game event message (JSON).
 		:return: current message
 		"""
-
 		if self.resource_handler.get_game_state(self.game_id):
 			try:
 				msg = self.resource_handler.get_event_head(self.game_id, self.user_token)
-				print(msg)
 				if msg is None:
-					print("HERE Not Found")
+					print(f"[{self.game_id}]: No Message available!")
 					return None
 				if self.check_if_all_player_have_entity() and self.check_if_event_is_action(msg):
 					self.topic = self.evaluate_correct_topic(msg)
 				return list([msg, self.topic])
 			except NotFoundError as ex_n:
-				print("Caught exception {}".format(ex_n.__str__()))
+				print(f"[{self.game_id}]: Exception in RESTClient: {ex_n.__str__()}")
 
 	def evaluate_correct_topic(self, msg):
 		"""

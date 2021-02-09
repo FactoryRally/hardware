@@ -30,6 +30,7 @@ class MQTTReceiver:
         This function creates a client connection to the MQTT Broker.
         :return: a client instance
         """
+
         def on_connect(client, userdata, flags, rc):
             """
             This function is the callback for a connection.
@@ -69,6 +70,7 @@ class MQTTReceiver:
         This function handles the main logic of the receiver and
         prints out the according event for the robot.
         """
+
         def on_message(client, userdata, msg):
             """
             This function is the callback which gets called when a

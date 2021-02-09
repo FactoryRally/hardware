@@ -1,6 +1,8 @@
 from simple_rest_client.exceptions import ServerError, NotFoundError
 from Resources import GamesResource, PlayersResource, EventsResource, MapResource, RobotsResource, ConsumersResource
 import sys
+import time
+
 
 class ResourceHandler:
 	"""
@@ -40,8 +42,8 @@ class ResourceHandler:
 	def get_players(self, game_id, user_token):
 		"""
 		This function returns all active players in the given (game_id) game.
-		:param user_token:
-		:param game_id: the game identifier
+		:param user_token: the given consumer access token
+		:param game_id: the given game identifier
 		:return: the player ids of all active players
 		"""
 		return self.api.players.get_players(game_id, user_token).body
@@ -49,74 +51,80 @@ class ResourceHandler:
 	def get_player(self, game_id, player_id):
 		"""
 		This function returns information about the given player in the given game.
-		:param player_id:
-		:param game_id: the game identifier
+		:param player_id: the given player id
+		:param game_id: the given game identifier
 		:return: information about the given player
 		"""
 		return self.api.players.get_player(game_id, player_id).body
 
 	def get_controlled_entities(self, game_id, player_id, user_token):
 		"""
-
-		:param user_token:
-		:param game_id:
-		:param player_id:
-		:return:
+		This method returns the controlled entities of the given player.
+		:param user_token: the given consumer access token
+		:param game_id: the given game identifier
+		:param player_id: the given player id
+		:return: the id of the controlled robot from the given player
 		"""
 		return self.api.players.get_player(game_id, player_id, user_token).body['controlled_entities'][0]
 
 	def get_game_state(self, game_id):
 		"""
-		This function returns the current state of the given game.
-		:param user_token:
-		:param game_id: the game identifier
+		This method returns the current state of the given game.
+		:param game_id: the given game identifier
 		:return: state of the game
 		"""
 		try:
 			return self.api.games.get_game_status(game_id).body["state"]
 		except NotFoundError:
-			print("GAME not found")
+			print(f"[{game_id}]: GAME not found")
 
 	def create_consumer(self, game_id):
 		"""
-		This function registers an consumer for hardware interaction.
-		:param game_id: the game identifier
+		This method registers an consumer for hardware interaction.
+		:param game_id: the given game identifier
 		:return: Response from the server e.g. the pat and the id
 		"""
-		return self.api.consumers.create_consumer(game_id, body={"name": "REST_consumer",
-																 "description": "Consumes the REST API"}).body
+		return self.api.consumers.create_consumer(game_id, body={"name": "RESTConsumer", "description": "Consumes the REST API"}).body
 
 	def get_event_head(self, game_id, user_token):
 		"""
-		This functions returns the event head message from the API endpoint.
-		:param game_id: the game identifier
-		:param user_token: the consumer token
-		:return:
+		This method returns the event head message from the API endpoint.
+		:param game_id: the given game identifier
+		:param user_token: the given consumer access token
+		:return: the latest event
 		"""
 		try:
 			return self.api.events.get_event_head(game_id, user_token).body
 		except NotFoundError as e:
-			print(e.__str__())
+			print(f"[{game_id}]: {e.__str__()}")
 		except ServerError:
-			print("Server Error! Please restart Server!")
+			print(f"[{game_id}]: Server Error! Please restart Server!")
 			sys.exit()
-
 
 	def get_new_games(self, current_games):
 		"""
-		This function compares the current games with the new games and
+		This method compares the current games with the new games and
 		builds the difference.
 		:param current_games: a list of all current games
-		:return: the difference
+		:return: the difference between all current games and the given games
 		"""
 		new_games = self.get_games()
 		return list(set(new_games) ^ set(current_games))
 
 	def get_all_robots(self, game_id, user_token):
 		"""
-
-		:param game_id:
-		:param user_token:
-		:return:
+		This method returns all robot ids.
+		:param game_id: the given game identifier
+		:param user_token: the given consumer access token
+		:return: all robot ids
 		"""
 		return self.api.robots.get_all_robots(game_id, user_token)
+
+	def check_for_lobby_game(self, games):
+		"""
+		This method waits until there are games in LOBBY state.
+		:param games: all game ids that are currently active
+		"""
+		while not games:
+			print("You need to start a game! There are only FINISHED matches running!")
+			time.sleep(3)

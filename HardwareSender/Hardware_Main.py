@@ -12,20 +12,21 @@ class HardwareMain:
 	starts the game process.
 	"""
 	# The root URL for the REST API
-	API_ROOT_URL = "http://localhost:5050/v1/"
+	api_root_url = "http://localhost:5050/v1/"
 
 	def __init__(self):
 		"""
-		This init function
+		This init method initiates the main class which provides the access to the REST API and
+		dynamically creates a thread for each game.
 		"""
-		self.api = API(api_root_url=self.API_ROOT_URL, json_encode_body=True)
+		self.api = API(api_root_url=self.api_root_url, json_encode_body=True)
 		self.resource_handler = ResourceHandler(self.api)
 		self.resource_handler.add_resources()
 		self.connection_handler = ConnectionHandler(self.api)
 		self.connection_handler.wait_for_api_availability()
 		self.connection_handler.wait_for_initialized_game()
 		self.games = self.resource_handler.get_games()
-		self.check_for_lobby_game()
+		self.resource_handler.check_for_lobby_game()
 		self.threads = []
 		self.generate_threads(self.games)
 		self.check_for_new_games()
@@ -38,7 +39,7 @@ class HardwareMain:
 		for game in games:
 			print(game)
 			new_game = self.generate_game(game)
-			print("THREAD CREATED!")
+			print(f"[Game-ID: {game}]: THREAD CREATED!")
 			t = MQTTSender(new_game)
 			t.run()
 			self.threads.append(t)
@@ -55,7 +56,6 @@ class HardwareMain:
 		This function checks each 5 seconds if a new game was added - if
 		there was one added, a new thread for handling this game (if it
 		meets the criteria) is initiated.
-		:return:
 		"""
 		while True:
 			new_games = self.resource_handler.get_new_games(self.games)
@@ -63,10 +63,6 @@ class HardwareMain:
 				self.generate_threads(new_games)
 				self.games = new_games
 			time.sleep(5)
-
-	def check_for_lobby_game(self):
-		if not self.games:
-			print("You need to start a game! There are only FINISHED matches running!")
 
 
 if __name__ == '__main__':
