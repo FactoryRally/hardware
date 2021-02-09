@@ -1,8 +1,8 @@
 from simple_rest_client.api import API
 from ResourceHandler import ResourceHandler
 from ConnectionHandler import ConnectionHandler
-from REST_Client import RestReceiver
-from sender import MQTTSender
+from RESTClient import RestReceiver
+from MQTTPublisher import MQTTSender
 import time
 
 
