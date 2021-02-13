@@ -2,7 +2,7 @@ from simple_rest_client.api import API
 from ResourceHandler import ResourceHandler
 from ConnectionHandler import ConnectionHandler
 from RESTClient import RestReceiver
-from MQTTPublisher import MQTTSender
+from MQTTPublisher import MQTTPublisher
 import time
 
 
@@ -40,7 +40,7 @@ class HardwareMain:
 			print(game)
 			new_game = self.generate_game(game)
 			print(f"[Game-ID: {game}]: THREAD CREATED!")
-			t = MQTTSender(new_game)
+			t = MQTTPublisher(new_game)
 			t.run()
 			self.threads.append(t)
 

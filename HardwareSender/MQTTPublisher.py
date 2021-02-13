@@ -1,10 +1,12 @@
+import json
+
 from paho.mqtt import client as mqtt_client
 import random
 from threading import Thread
 import time
 
 
-class MQTTSender(Thread):
+class MQTTPublisher(Thread):
 	"""
 	This class is the MQTT Sender which pushes the current game event
 	to the broker on the according topic.
@@ -72,22 +74,24 @@ class MQTTSender(Thread):
 			:param userdata: the submitted userdata
 			:param msg: received message
 			"""
-			# client.publish(client_id,msg.topic)
-			print(f"[{self.game_id}]: Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+
 			if not str(msg.payload.decode()).__contains__('type'):
+				print(f"[{self.game_id}]: Received `{msg.payload.decode()}` from `{msg.topic}` topic")
 				self.topics.append(eval(msg.payload.decode())[2])
 				helper_topic = 1
-				# for x in topics: print("topics" + x)
-				#print("length " + str(len(self.topics)))
 				if self.RestReceiver.get_controlled_entities() == len(self.topics):
 					for x in self.topics:
 						self.ids.append(helper_topic)
 						helper_topic += 1
 						print(f"[{self.game_id}]: {helper_topic}")
-						client.publish(x, {"topic": str(helper_topic)}.__str__())
+						client.publish(x, {"Your client topic is": str(helper_topic)}.__str__())
+			if msg.topic == "general":
+				print(f"[{self.game_id}]: Received message on general: {msg.payload.decode()}")
 
 		self.client.subscribe(self.discover_topic)
 		self.client.on_message = on_message
+		while self.RestReceiver.get_controlled_entities() != len(self.topics):
+			continue
 
 	def publish(self):
 		"""
@@ -96,8 +100,9 @@ class MQTTSender(Thread):
 		"""
 		while True:
 			resp = self.RestReceiver.get_current_message()
+			obj = json.dumps(resp)
+			print(obj)
 			if resp is not None:
-				#print(resp)
 				msg = resp[0]
 				curr_topic = resp[1]
 				result = self.client.publish(curr_topic, str(msg))
@@ -112,17 +117,4 @@ class MQTTSender(Thread):
 
 
 if __name__ == '__main__':
-	MQTTSender(None)
-
-#  for x in range(input_msg.get("number_of_clients")):
-#      msg = {f"discover @ client":f"`{x}`", "with topic":f"`{x}`"}.__str__()
-#      topic = f"client {x}"
-
-#      result = client.publish(discover_topic, msg)
-#     result: [0, 1]
-##     status = result[0]
-#    if status == 0:
-#        print(f"Send `{msg}` to `{topic}`")
-#   else:
-#      print(f"Failed to send message to {topic}")
-#  topics.append(topic)
+	MQTTPublisher(None)

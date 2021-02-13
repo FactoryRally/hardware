@@ -1,5 +1,5 @@
-import random
-from paho.mqtt import client as mqtt_client
+import random as rd  # random imported and bound locally
+from paho.mqtt import client as MQTTClient
 
 
 class MQTTReceiver:
@@ -13,7 +13,7 @@ class MQTTReceiver:
     discover_topic = "discover"
     topic = "general"
     # generate client ID with pub prefix randomly
-    client_id = f'client-{random.randint(0, 10000)}'
+    client_id = f'client-{rd.randint(0, 10000)}'
 
     def __init__(self):
         """
@@ -25,7 +25,7 @@ class MQTTReceiver:
         self.subscribe()
         self.client.loop_forever()
 
-    def connect_mqtt(self) -> mqtt_client:
+    def connect_mqtt(self) -> MQTTClient:
         """
         This function creates a client connection to the MQTT Broker.
         :return: a client instance
@@ -44,7 +44,7 @@ class MQTTReceiver:
             else:
                 print("Failed to connect, return code %d\n", rc)
 
-        client = mqtt_client.Client(self.client_id)
+        client = MQTTClient.Client(self.client_id)
         client.on_connect = on_connect
         client.connect(self.broker, self.port)
         return client
@@ -53,7 +53,7 @@ class MQTTReceiver:
         """
         This function is used for the discovery phase on the start of the game.
         """
-        msg = {"topic": self.client_id}.__str__()
+        msg = {"This client topic is": self.client_id}.__str__()
         result = self.client.publish(self.discover_topic, msg)
         result: [0, 1]
         status = result[0]
@@ -79,16 +79,26 @@ class MQTTReceiver:
             :param userdata:
             :param msg:
             """
-            print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-            if str(msg.payload.decode()).__contains__("topic"):
+            msg_decoded = msg.payload.decode()
+            if str(msg_decoded).__contains__("Your client topic is"):
                 act_payload = eval(msg.payload.decode()).get('topic')
-                topic = "client"+act_payload
-                client.subscribe(topic)
-                print(f"subscribed to `{topic}`")
-            else:
-                print("Message is currently unacceptable!")
+                self.topic = "client"+act_payload
+                client.subscribe(self.topic)
+                print(f"subscribed to `{self.topic}`")
+            elif dict(msg_decoded).__contains__("type"):
+                msg_content = msg.payload.decode()
+                self.execute_command(msg_content)
 
         self.client.on_message = on_message
+        if not self.topic.__contains__("client"):
+            print("GAME PHASE not started!")
+
+    def execute_command(self, msg):
+        """
+        This method executes the received the command.
+        :return:
+        """
+        print(msg)
 
 
 if __name__ == '__main__':
