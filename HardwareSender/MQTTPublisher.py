@@ -1,5 +1,4 @@
 import json
-
 from paho.mqtt import client as mqtt_client
 import random
 from threading import Thread
