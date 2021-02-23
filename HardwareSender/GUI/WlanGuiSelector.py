@@ -1,5 +1,5 @@
 import tkinter as tk
-import WifiScanner
+from GUI import WifiScanner
 from tkinter import font
 from tkinter import messagebox
 import os

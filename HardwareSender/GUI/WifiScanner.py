@@ -36,7 +36,7 @@ def connect_to_wlan(ssid, password):
 def evaluate_result(result):
     """
     This function evaluates whether the connection to a network was a success or failure.
-    :param result:
+    :param result: the output of the
     :return:
     """
     if result.__contains__(failure):

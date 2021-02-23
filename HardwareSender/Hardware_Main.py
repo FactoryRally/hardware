@@ -1,10 +1,11 @@
 from simple_rest_client.api import API
-from ResourceHandler import ResourceHandler
-from ConnectionHandler import ConnectionHandler
-from RESTClient import RestReceiver
-from MQTTPublisher import MQTTPublisher
+from REST.ResourceHandler import ResourceHandler
+from REST.ConnectionHandler import ConnectionHandler
+from REST.RESTClient import RestReceiver
+from MQTT.MQTTPublisher import MQTTPublisher
 import time
-from GameSelector import GameSelector
+from GUI.GameSelector import GameSelector
+
 
 class HardwareMain:
 	"""

@@ -1,5 +1,5 @@
 from simple_rest_client.exceptions import ServerError, NotFoundError
-from Resources import GamesResource, PlayersResource, EventsResource, MapResource, RobotsResource, ConsumersResource
+from REST.Resources import GamesResource, PlayersResource, EventsResource, MapResource, RobotsResource, ConsumersResource
 import sys
 import time
 
