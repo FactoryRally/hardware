@@ -1,5 +1,7 @@
 import subprocess
 
+failure = "Fehler"
+
 
 def return_all_wifi_connections():
     """
@@ -28,7 +30,25 @@ def connect_to_wlan(ssid, password):
     :return: result of the command, e.g. if connection was successful
     """
     result = subprocess.run(['nmcli', "d", "wifi", "connect", ssid, "password", str(password)], stdout=subprocess.PIPE)
-    print(result.stdout.decode('utf-8'))
+    return evaluate_result(result.stdout.decode('utf-8'))
+
+
+def evaluate_result(result):
+    """
+    This function evaluates whether the connection to a network was a success or failure.
+    :param result:
+    :return:
+    """
+    if result.__contains__(failure):
+        if result.__contains__("Not authorized to control networking."):
+            return False, "Wrong Password entered"
+        if result.__contains__("Es wurde kein Netzwerk mit SSID"):
+            return False, "No Network with that SSID exists."
+        return False, "Error"
+    else:
+        return True
+
+
 
 
 
