@@ -4,7 +4,7 @@ from ConnectionHandler import ConnectionHandler
 from RESTClient import RestReceiver
 from MQTTPublisher import MQTTPublisher
 import time
-
+from GameSelector import GameSelector
 
 class HardwareMain:
 	"""
@@ -27,6 +27,9 @@ class HardwareMain:
 		self.connection_handler.wait_for_initialized_game()
 		self.games = self.resource_handler.get_games()
 		self.resource_handler.check_for_lobby_game()
+		gui = GameSelector()
+		gui.mainloop()
+		self.game = gui.value
 		self.threads = []
 		self.generate_threads(self.games)
 		self.check_for_new_games()

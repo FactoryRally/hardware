@@ -1,21 +1,21 @@
 import socket
 from multiprocessing import Process, Queue
 import time
+import subprocess
 
 """
 Tools to scan network from python.
 Mostly taken from stack overflow and mixed together.
-Author: Julesik Kolesik <jkolesik at jkolesik@student.tgm.ac.at>
+Author: Julian Kolesik <jkolesik at jkolesik@student.tgm.ac.at>
 Source: Sammy Pfeiffer <Sammy.Pfeiffer at student.uts.edu.au>
 """
-
 
 def get_own_ip():
     """
     Get the own IP, even without internet connection.
     From https://stackoverflow.com/a/1267524
     """
-    return (([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0]
+    return "192.168.0.132"
 
 
 class NetworkScanner:
@@ -35,9 +35,9 @@ class NetworkScanner:
         s = socket.socket()
         try:
             s.connect((address, port))
-            self.queue.put((True, address, port))
+            self.q.put((True, address, port))
         except socket.error as e:
-            self.queue.put((False, address, port))
+            self.q.put((False, address, port))
 
     def check_subnet_for_open_port(self, subnet, port, timeout=3.0):
         """
@@ -47,29 +47,31 @@ class NetworkScanner:
         :param timeout: the timeout time for each connection try
         :returns [str]: List of IPs with port open found.
         """
-        q = Queue()
-        processes = []
+        self.q = Queue()
+        self.processes = []
         for i in range(1, 255):
             ip = subnet + '.' + str(i)
-            p = Process(target=self.check_server, args=[ip, port, q])
-            processes.append(p)
+            print(ip)
+            p = Process(target=self.check_server, args=(ip, port))
+            self.processes.append(p)
             p.start()
+            print(i)
         # Give a bit of time...
         time.sleep(timeout)
 
         found_ips = []
-        for idx, p in enumerate(processes):
+        for idx, p in enumerate(self.processes):
             # If not finished in the timeout, kill the process
             if p.exitcode is None:
                 p.terminate()
             else:
                 # If finished check if the port was open
-                open_ip, address, port = q.get()
+                open_ip, address, port = self.q.get()
                 if open_ip:
                     found_ips.append(address)
 
         #  Cleanup processes
-        for idx, p in enumerate(processes):
+        for idx, p in enumerate(self.processes):
             p.join()
 
         return found_ips
@@ -90,4 +92,4 @@ class NetworkScanner:
 
 if __name__ == '__main__':
     network_scanner = NetworkScanner()
-    network_scanner.check_own_subnet_for_open_port(5050)
+    print(network_scanner.check_own_subnet_for_open_port(5050))
