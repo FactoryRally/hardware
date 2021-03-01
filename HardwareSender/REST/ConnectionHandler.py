@@ -6,7 +6,7 @@ class ConnectionHandler:
 	"""
 	This class handles the connection to the API and manages different possible errors as well as it performs checks.
 	"""
-	safe_url = "http://localhost:5050/"
+	api_root_url = "http://localhost:5050/"
 	game_started = "PLAYING"
 
 	def __init__(self, api):
@@ -45,7 +45,7 @@ class ConnectionHandler:
 		"""
 		while True:
 			try:
-				resp = requests.get(self.safe_url)
+				resp = requests.get(self.api_root_url)
 				resp.raise_for_status()
 				return
 			except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):

@@ -12,8 +12,7 @@ class HardwareMain:
 	This class initiates the REST Receiver and the MQTT Sender and
 	starts the game process.
 	"""
-	# The root URL for the REST API
-	api_root_url = "http://localhost:5050/v1/"
+	api_root_url = "http://localhost:5050/"
 
 	def __init__(self):
 		"""

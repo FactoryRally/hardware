@@ -13,13 +13,13 @@ def return_all_wifi_connections():
     scan_out_data = {}
     for each_line in scan_out_lines:
         split_line = [e for e in each_line.split(" ") if e != ""]
-        line_data = {"SSID": split_line[0], "RSSI": int(split_line[2]), "channel": split_line[3],
-                     "HT": (split_line[4] == "Y"), "CC": split_line[5], "security": split_line[6]}
+        line_data = {"SSID": split_line[0], "RSSI": int(split_line[2]),
+                     "HT": (split_line[4] == "Y"), "CC": split_line[5]}
         scan_out_data[split_line[1]] = line_data
-    list = []
+    ssid_list = []
     for key in scan_out_data.keys():
-        list.append(scan_out_data.get(key).get('SSID'))
-    return list
+        ssid_list.append(scan_out_data.get(key).get('SSID'))
+    return ssid_list
 
 
 def connect_to_wlan(ssid, password):
@@ -29,7 +29,7 @@ def connect_to_wlan(ssid, password):
     :param password: the WPA passphrase of the given network
     :return: result of the command, e.g. if connection was successful
     """
-    result = subprocess.run(['nmcli', "d", "wifi", "connect", ssid, "password", str(password)], stdout=subprocess.PIPE)
+    result = subprocess.run(['nmcli', "d", "wifi", "connect", ssid, "password", password], stdout=subprocess.PIPE)
     return evaluate_result(result.stdout.decode('utf-8'))
 
 
