@@ -8,7 +8,7 @@ import os
 if os.environ.get('DISPLAY', '') == '':
 	os.environ.__setitem__('DISPLAY', ':0.0')
 
-selected_wlan = ""
+selected_wlan = None
 
 
 class WlanSelector(tk.Tk):
@@ -20,6 +20,7 @@ class WlanSelector(tk.Tk):
 	def __init__(self):
 		# __init__ function for class Tk
 		tk.Tk.__init__(self)
+		super().geometry("640x320")
 
 		# creating a container
 		container = tk.Frame(self)
@@ -60,10 +61,27 @@ class WlanChooser(tk.Frame):
 		self.controller = controller
 		tk.Frame.__init__(self, master=parent)
 		game_font = tk.font.Font(size=15)
-		self.list = tk.Listbox(self, width=40, font=game_font)
-		self.list.insert(0, ["a", "b", "c"])
+		self.list = tk.Listbox(self, width=30, height=5, font=game_font)
+		self.list.insert(0, ["a"])
+		self.list.insert(1, ["a"])
+		self.list.insert(2, ["a"])
+		self.list.insert(3, ["a"])
+		self.list.insert(4, ["a"])
+		self.list.insert(5, ["a"])
+		self.list.insert(6, ["a"])
+		self.list.insert(7, ["a"])
+		self.list.insert(8, ["a"])
+		self.list.insert(9, ["a"])
+		self.list.insert(10, ["a"])
+		self.list.insert(11, ["a"])
+		self.list.insert(12, ["a"])
+		self.list.insert(13, ["a"])
 		self.confirm_button = tk.Button(self, text="Choose WLAN", command=self.choose_wlan)
-		self.list.pack()
+		scrollbar = tk.Scrollbar(self)
+		scrollbar.pack(side="right", fill="y")
+		self.list.config(yscrollcommand=scrollbar.set)
+		scrollbar.config(command=self.list.yview)
+		self.list.pack(pady=40)
 		self.confirm_button.pack()
 
 	def choose_wlan(self):
@@ -75,7 +93,7 @@ class WlanChooser(tk.Frame):
 			selected_wlan = self.list.get(self.list.curselection())
 			self.controller.show_frame(PasswordPage)
 		except _tkinter.TclError as e:
-			tk.messagebox.showerror("Selection Error", "Please select a WLAN Interface before your press choose WLAN!")
+			tk.messagebox.showerror("Selection Error", "Please select a WLAN Interface before your press choose WLAN!")#
 
 
 def show_error_box(msg):
@@ -104,27 +122,22 @@ class PasswordPage(tk.Frame):
 	"""
 	This is wrong
 	"""
-
 	def __init__(self, parent, controller):
 		global selected_wlan
 		self.controller = controller
 		tk.Frame.__init__(self, master=parent)
-		print(type(parent))
-		self.label2 = tk.Label(self)
-		self.label2.configure(text=selected_wlan)
-		self.label2.pack(side='top')
 		self.entry2 = tk.Entry(self)
 		_text_ = '''entry2'''
 		self.entry2.delete('0', 'end')
 		self.entry2.insert('0', _text_)
-		self.entry2.pack(side='top')
+		self.entry2.place(x=240,y=100)
 		self.button4 = tk.Button(self)
-		self.button4.configure(padx='20', pady='5', text='Cancel', command=lambda: self.controller.show_frame(WlanChooser))
-		self.button4.pack(side='right')
+		self.button4.configure(padx=60, pady=3, text='Cancel!', command=lambda: self.controller.show_frame(WlanChooser))
+		self.button4.place(x=350,y=160)
 		self.button5 = tk.Button(self)
-		self.button5.configure(padx='20', pady='5', relief='raised',
+		self.button5.configure( padx=60, pady=3, text='Connect!',
 								command=lambda: self.execute_password_check(ssid=selected_wlan))
-		self.button5.pack(side='left')
+		self.button5.place(x=130,y=160)
 
 	def execute_password_check(self, ssid):
 		"""
@@ -132,9 +145,10 @@ class PasswordPage(tk.Frame):
 		:param master:
 		:return:
 		"""
-		print(type(self.entry2.get()))
-		check = WifiScanner.connect_to_wlan(str(ssid), str(self.entry2.get()))
-		if check:
+		val = []
+		val.append(WifiScanner.connect_to_wlan(str(ssid), str(self.entry2.get())))
+		print(val)
+		if val:
 			self.controller.show_frame(InformationDisplay).pack()
 		else:
 			show_error_box("Password wrong!")

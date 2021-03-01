@@ -5,7 +5,7 @@ from threading import Thread
 import time
 
 
-class MQTTPublisher(Thread):
+class MQTTPublisher():
 	"""
 	This class is the MQTT Sender which pushes the current game event
 	to the broker on the according topic.
@@ -27,9 +27,10 @@ class MQTTPublisher(Thread):
 		self.RestReceiver = rest_receiver
 		self.game_id = self.RestReceiver.game_id
 
-	def run(self):
+	def start(self):
 		"""
-		This function starts the game process and initiates the topics.
+		This method starts the game process.
+		:return:
 		"""
 		self.discover_and_notify()
 		self.publish()

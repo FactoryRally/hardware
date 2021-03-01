@@ -1,7 +1,5 @@
 import subprocess
 
-failure = "Fehler"
-
 
 def return_all_wifi_connections():
     """
@@ -30,7 +28,7 @@ def connect_to_wlan(ssid, password):
     :return: result of the command, e.g. if connection was successful
     """
     result = subprocess.run(['nmcli', "d", "wifi", "connect", ssid, "password", password], stdout=subprocess.PIPE)
-    return evaluate_result(result.stdout.decode('utf-8'))
+    return evaluate_result(result)
 
 
 def evaluate_result(result):
@@ -39,14 +37,17 @@ def evaluate_result(result):
     :param result: the output of the
     :return:
     """
-    if result.__contains__(failure):
-        if result.__contains__("Not authorized to control networking."):
-            return False, "Wrong Password entered"
-        if result.__contains__("Es wurde kein Netzwerk mit SSID"):
+    if not result == 0:
+        if result == 10:
             return False, "No Network with that SSID exists."
-        return False, "Error"
+        if result == 8:
+            return False, "NetworkManager not running!"
+        if result == 2:
+            return False, "Invalid user input!"
+        if result in (1, 3, 4, 5, 6):
+            return False, "Something went wrong!"
     else:
-        return True
+        return True, "Connection established!"
 
 
 
