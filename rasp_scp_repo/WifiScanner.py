@@ -1,6 +1,5 @@
 import subprocess
 
-
 def return_all_wifi_connections():
     """
     This function returns all currently available wifi access points.
@@ -27,7 +26,8 @@ def connect_to_wlan(ssid, password):
     :param password: the WPA passphrase of the given network
     :return: result of the command, e.g. if connection was successful
     """
-    result = subprocess.run(['nmcli', "d", "wifi", "connect", ssid, "password", password], stdout=subprocess.PIPE)
+    result = subprocess.run(['nmcli', "d", "wifi", "connect", ssid, "password", password], stdout=subprocess.PIPE).returncode
+    print(result)
     return evaluate_result(result)
 
 
@@ -39,15 +39,16 @@ def evaluate_result(result):
     """
     if not result == 0:
         if result == 10:
-            return (False, "No Network with that SSID exists.")
+            return False, "No Network with that SSID exists."
         if result == 8:
-            return (False, "NetworkManager not running!")
+            return False, "NetworkManager not running!"
         if result == 2:
-            return (False, "Invalid user input!")
+            return False, "Invalid user input!"
         if result in (1, 3, 4, 5, 6):
-            return (False, "Something went wrong!")
+            return False, "Something went wrong!"
     else:
-        return (True, "Connection established!")
+        return True, "Connection established!"
+
 
 
 
