@@ -11,6 +11,7 @@ if os.environ.get('DISPLAY', '') == '':
 
 selected_wlan = None
 
+
 class WlanSelector(tk.Tk):
 	"""
 	This class provides a simple interface for the user to choose a game.
@@ -51,7 +52,7 @@ class WlanSelector(tk.Tk):
 	# parameter
 	def show_frame(self, cont):
 		"""
-		This
+		This method is used to switch between frames. 
 		:param cont:
 		"""
 		frame = self.frames[cont]
@@ -61,7 +62,7 @@ class WlanSelector(tk.Tk):
 
 class WlanChooser(tk.Frame):
 	"""
-	This
+	This class displays all available networks through a list.
 	"""
 
 	def __init__(self, parent, controller):
@@ -69,9 +70,8 @@ class WlanChooser(tk.Frame):
 		tk.Frame.__init__(self, master=parent)
 		game_font = tk.font.Font(size=15)
 		self.list = tk.Listbox(self, width=30, height=5, font=game_font)
-		#for num, ele in enumerate(WifiScanner.return_all_wifi_connections(), start=0):
-		#	self.list.insert(num, ele)
-		self.list.insert(0,"a")
+		for num, ele in enumerate(WifiScanner.return_all_wifi_connections(), start=0):
+			self.list.insert(num, ele)
 		self.confirm_button = tk.Button(self, text="Netzwerk auswählen!", command=self.choose_wlan)
 		scrollbar = tk.Scrollbar(self)
 		scrollbar.pack(side="right", fill="y")
@@ -95,7 +95,7 @@ class WlanChooser(tk.Frame):
 
 def show_error_box(msg):
 	"""
-	This
+	This method shows a error box with a given message.
 	:param msg:
 	:return:
 	"""
@@ -104,10 +104,9 @@ def show_error_box(msg):
 
 def show_question_box(msg, obj):
 	"""
-	This
-	:param obj:
-	:param msg:
-	:return:
+	This method displays a question box with a given question.
+	:param obj: wrapper for switching between frames
+	:param msg: the message thats to be displayed
 	"""
 	if tk.messagebox.askquestion("Warning", msg) == 'yes':
 		tk.messagebox.showinfo('Info', msg)
@@ -117,7 +116,7 @@ def show_question_box(msg, obj):
 
 class PasswordPage(tk.Frame):
 	"""
-	This is wrong
+	This class is a front-end for the user to put in their information.
 	"""
 
 	def __init__(self, parent, controller):
@@ -126,7 +125,7 @@ class PasswordPage(tk.Frame):
 		tk.Frame.__init__(self, master=parent)
 		self.entry2 = tk.Entry(self)
 		self.label = tk.Label(self)
-		self.label.config(text='13', font=game_font)
+		self.label.config(text='13', font=(None, 14))
 		self.label.place(x=160, y=35, anchor="center")
 		_text_ = '''entry2'''
 		self.entry2.delete('0', 'end')
@@ -142,10 +141,8 @@ class PasswordPage(tk.Frame):
 
 	def execute_password_check(self, ssid):
 		"""
-		This
-		:param ssid:
-		:param master:
-		:return:
+		This method connects to a given network.
+		:param ssid: network name
 		"""
 		estab, msg = (WifiScanner.connect_to_wlan(str(ssid), str(self.entry2.get())))
 		if estab:
@@ -156,23 +153,29 @@ class PasswordPage(tk.Frame):
 
 class InformationDisplay(tk.Frame):
 	"""
-	This
+	This class is used to display the current game event on the Raspberry Pi.
 	"""
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, master=parent)
 		self.controller = controller
-		self.text3 = tk.Text(self)
-		self.text3.configure(borderwidth='2', height='10', width='120')
-		_text_ = '''text3'''
-		self.text3.insert('0.0', _text_)
-		self.text3.pack(side='top')
+		self.text = tk.StringVar()
+		self.text1 = tk.StringVar()
 
-	def update_information(self):
+		self.text.set("Aktueller Spielzug:")
+		self.text1.set("")
+		self.label1 = tk.Label(self)
+		self.label1.configure(textvariable=self.text, font=(None, 24))
+		self.label1.place(x='130', y='80', anchor='center')
+		self.label2 = tk.Label(self)
+		self.label2.configure(textvariable=self.text1, font=(None, 35))
+		self.label2.place(x='160', y='130', anchor='center')
+
+	def update_information(self, msg):
 		"""
-		This
-		:return:
+		This method displays the current game event.
 		"""
+		self.text1.set(msg)
 
 
 app = WlanSelector()

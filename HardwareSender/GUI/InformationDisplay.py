@@ -1,26 +1,33 @@
-import tkinter as tk
+class NewprojectApp:
+    def __init__(self, master=None):
+        root.geometry('640x320')
 
-class InformationDisplay(tk.Frame):
-	"""
-	This
-	"""
+        self.text = tk.StringVar()
+        self.text1 = tk.StringVar()
 
-	def __init__(self, parent, controller):
-		tk.Frame.__init__(self, master=parent)
-		self.controller = controller
-		# build ui
-		self.text3 = tk.Text(self)
-		self.text3.configure(borderwidth='2', height='10', width='120')
-		_text_ = '''text3'''
-		self.text3.insert('0.0', _text_)
-		self.text3.pack(side='top')
-		self.configure(height='200', width='200')
-		self.pack(side='top')
+        self.text.set("Aktueller Spielzug:")
+        self.text1.set("")
+        # build ui
+        self.frame1 = tk.Frame(master)
+        self.label1 = tk.Label(self.frame1)
+        self.label1.configure(textvariable=self.text, font=(None, 24))
+        self.label1.place(x='130', y='80', anchor='center')
+        self.label2 = tk.Label(self.frame1)
+        self.label2.configure(textvariable=self.text1, font=(None, 35))
+        self.label2.place(x='160', y='130', anchor='center')
+        self.frame1.configure(height='640', width='320')
+        self.frame1.place(anchor='nw', x='0', y='0')
+
+        # Main widget
+        self.mainwindow = self.frame1
+        self.mainwindow.update()
+
+    def run(self):
+        self.mainwindow.mainloop()
 
 
-	def update_information(self):
-		"""
-		This
-		:return:
-		"""
-		self
+if __name__ == '__main__':
+    import tkinter as tk
+    root = tk.Tk()
+    app = NewprojectApp(root)
+    app.run()

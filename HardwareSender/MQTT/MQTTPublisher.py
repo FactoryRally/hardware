@@ -100,8 +100,6 @@ class MQTTPublisher():
 		"""
 		while True:
 			resp = self.RestReceiver.get_current_message()
-			obj = json.dumps(resp)
-			print(obj)
 			if resp is not None:
 				msg = resp[0]
 				curr_topic = resp[1]

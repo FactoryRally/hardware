@@ -12,6 +12,7 @@ class MQTTReceiver:
     port = 1883
     discover_topic = "discover"
     topic = "general"
+    general_topic = "general"
     # generate client ID with pub prefix randomly
     client_id = f'client-{rd.randint(0, 10000)}'
 
@@ -63,6 +64,7 @@ class MQTTReceiver:
         else:
             print(f"Failed to send message to {self.discover_topic}")
         self.client.unsubscribe(self.discover_topic)
+        self.client.subscribe(self.general_topic)
         self.client.subscribe(self.client_id)
 
     def subscribe(self):
