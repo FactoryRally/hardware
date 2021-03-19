@@ -1,6 +1,5 @@
-from tkinter import font
 import tkinter as tk
-from GUI import WifiScanner
+from NetworkUtilities import WifiScanner
 from GUI import WlanChooser
 from GUI import WlanGuiSelector
 

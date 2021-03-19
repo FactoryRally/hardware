@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import _tkinter
 import tkinter as tk
-from GUI import WifiScanner
+from NetworkUtilities import WifiScanner
 from tkinter import font
 from tkinter import messagebox
 import os
@@ -52,7 +52,7 @@ class WlanSelector(tk.Tk):
 	# parameter
 	def show_frame(self, cont):
 		"""
-		This method is used to switch between frames. 
+		This method is used to switch between frames.
 		:param cont:
 		"""
 		frame = self.frames[cont]

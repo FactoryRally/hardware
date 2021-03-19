@@ -1,5 +1,19 @@
-import random as rd  # random imported and bound locally
+import random as rd
 from paho.mqtt import client as MQTTClient
+
+
+def execute_command(msg, event_type):
+    """
+    This method executes the received command.
+    :param: msg: the decoded message containing game info
+    :param: event_type: the given event type
+    :return:
+    """
+    msg_decoded = dict(msg)
+    if event_type == "MovementEvent":
+        print(f"perform_movement({msg_decoded.get('entity')}, {msg_decoded.get('direction')}, "
+              f"{msg_decoded.get('rotation')}, {msg_decoded.get('rotation-times')}, {msg_decoded.get('to').get('x')},"
+              f" {msg_decoded.get('to').get('y')}")
 
 
 class MQTTReceiver:
@@ -15,6 +29,7 @@ class MQTTReceiver:
     general_topic = "general"
     # generate client ID with pub prefix randomly
     client_id = f'client-{rd.randint(0, 10000)}'
+    id_received = False
 
     def __init__(self):
         """
@@ -82,25 +97,20 @@ class MQTTReceiver:
             :param msg:
             """
             msg_decoded = msg.payload.decode()
-            if str(msg_decoded).__contains__("Your client topic is"):
+            if self.id_received:
+                execute_command(msg_decoded)
+            elif not self.id_received and str(msg_decoded).__contains__("Your client topic is"):
                 act_payload = eval(msg.payload.decode()).get('topic')
                 self.topic = "client"+act_payload
                 client.subscribe(self.topic)
                 print(f"subscribed to `{self.topic}`")
-            elif dict(msg_decoded).__contains__("type"):
-                msg_content = msg.payload.decode()
-                self.execute_command(msg_content)
+                self.id_received = True
+            else:
+                print(msg_decoded)
 
         self.client.on_message = on_message
-        if not self.topic.__contains__("client"):
+        if not self.id_received:
             print("GAME PHASE not started!")
-
-    def execute_command(self, msg):
-        """
-        This method executes the received the command.
-        :return:
-        """
-        print(msg)
 
 
 if __name__ == '__main__':

@@ -1,7 +1,6 @@
 import socket
 from multiprocessing import Process, Queue
 import time
-import subprocess
 
 """
 Tools to scan network from python.
