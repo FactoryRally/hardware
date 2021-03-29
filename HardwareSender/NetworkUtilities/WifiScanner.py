@@ -39,15 +39,15 @@ def evaluate_result(result):
     """
     if not result == 0:
         if result == 10:
-            return (False, "No Network with that SSID exists.")
+            return False, "No Network with that SSID exists."
         if result == 8:
-            return (False, "NetworkManager not running!")
+            return False, "NetworkManager not running!"
         if result == 2:
-            return (False, "Invalid user input!")
+            return False, "Invalid user input!"
         if result in (1, 3, 4, 5, 6):
-            return (False, "Something went wrong!")
+            return False, "Something went wrong!"
     else:
-        return (True, "Connection established!")
+        return True, "Connection established!"
 
 
 

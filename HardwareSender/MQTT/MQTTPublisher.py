@@ -1,11 +1,11 @@
-import json
 from paho.mqtt import client as mqtt_client
 import random
-from threading import Thread
 import time
 
+RELEVANT_ACTIONS = []
 
-class MQTTPublisher():
+
+class MQTTPublisher:
 	"""
 	This class is the MQTT Sender which pushes the current game event
 	to the broker on the according topic.
@@ -16,7 +16,9 @@ class MQTTPublisher():
 	client_id = f'python-mqtt-{random.randint(0, 10000)}'
 	topics = []
 	ids = []
-	discover_topic = "general"
+	GEN_TOPIC = "general"
+	SETUP = False
+	ACTIVE = False
 
 	def __init__(self, rest_receiver):
 		"""
@@ -74,21 +76,28 @@ class MQTTPublisher():
 			:param userdata: the submitted userdata
 			:param msg: received message
 			"""
+			msg_decoded = str(msg.payload.decode())
+			if msg_decoded.__contains__("winner"):
+				self.client.publish(self.GEN_TOPIC, "game-over")
+				self.close_game()
+			else:
+				if msg.topic == self.GEN_TOPIC:
+					print(f"[{self.game_id}]: Received message on general: {msg_decoded}")
+				else:
+					if not msg_decoded.__contains__('type') and self.SETUP is False:
+						print(f"[{self.game_id}]: Received `{msg_decoded}` from `{msg.topic}` topic")
+						self.topics.append(eval(msg.payload.decode())[2])
+						helper_topic = 1
+						if self.RestReceiver.get_controlled_entities() == len(self.topics):
+							for x in self.topics:
+								self.ids.append(helper_topic)
+								helper_topic += 1
+								print(f"[{self.game_id}]: {helper_topic}")
+								client.publish(x, {"Your client topic is": str(helper_topic)}.__str__())
+						self.SETUP = True
+						self.ACTIVE = True
 
-			if not str(msg.payload.decode()).__contains__('type'):
-				print(f"[{self.game_id}]: Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-				self.topics.append(eval(msg.payload.decode())[2])
-				helper_topic = 1
-				if self.RestReceiver.get_controlled_entities() == len(self.topics):
-					for x in self.topics:
-						self.ids.append(helper_topic)
-						helper_topic += 1
-						print(f"[{self.game_id}]: {helper_topic}")
-						client.publish(x, {"Your client topic is": str(helper_topic)}.__str__())
-			if msg.topic == "general":
-				print(f"[{self.game_id}]: Received message on general: {msg.payload.decode()}")
-
-		self.client.subscribe(self.discover_topic)
+		self.client.subscribe(self.GEN_TOPIC)
 		self.client.on_message = on_message
 		while self.RestReceiver.get_controlled_entities() != len(self.topics):
 			continue
@@ -98,20 +107,41 @@ class MQTTPublisher():
 		This method publishes the current message to the broker with
 		the according topic.
 		"""
-		while True:
+		while True and self.ACTIVE:
 			resp = self.RestReceiver.get_current_message()
 			if resp is not None:
 				msg = resp[0]
 				curr_topic = resp[1]
-				result = self.client.publish(curr_topic, str(msg))
-				result: [0, 1]
-				status = result[0]
-				if status == 0:
-					print(f"[{self.game_id}]: Send `{msg}` to `{curr_topic}`")
-				else:
-					print(f"[{self.game_id}]: Failed to send message to {curr_topic}")
+				if evaluate_relevance(msg):
+					result = self.client.publish(curr_topic, str(msg))
+					result: [0, 1]
+					status = result[0]
+					if status == 0:
+						print(f"[{self.game_id}]: Send `{msg}` to `{curr_topic}`")
+					else:
+						print(f"[{self.game_id}]: Failed to send message to {curr_topic}")
 
 			time.sleep(1)
+
+	def close_game(self):
+		"""
+		This
+		:return:
+		"""
+		for key in self.RestReceiver.get_controlled_entities():
+			self.client.unsubscribe(key)
+		self.ACTIVE = False
+
+
+def evaluate_relevance(msg):
+	"""
+	This
+	:param msg:
+	:return:
+	"""
+	if dict(msg) in RELEVANT_ACTIONS:
+		return True
+	return False
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ from GUI import PasswordPage
 
 selected_wlan = ""
 
+
 class WlanChooser(tk.Frame):
 	"""
 	This
