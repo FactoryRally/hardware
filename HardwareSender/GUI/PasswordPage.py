@@ -1,7 +1,7 @@
 import tkinter as tk
 from NetworkUtilities import WifiScanner
 from GUI import WlanChooser
-from GUI import WlanGuiSelector
+from GUI import NetworkUI
 
 
 class PasswordPage(tk.Frame):
@@ -41,4 +41,4 @@ class PasswordPage(tk.Frame):
 		if check:
 			self.controller.show_frame(InformationDisplay).pack()
 		else:
-			WlanGuiSelector.show_error_box("Password wrong!")
+			NetworkUI.show_error_box("Password wrong!")

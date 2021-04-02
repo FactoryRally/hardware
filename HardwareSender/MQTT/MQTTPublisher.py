@@ -1,9 +1,12 @@
 from paho.mqtt import client as mqtt_client
 import random
 import time
+import Hardware_Main
+
+from GUI.GameGUI import GameSelector, GameStartPage
+from REST.RESTClient import RestReceiver
 
 RELEVANT_ACTIONS = []
-
 
 class MQTTPublisher:
 	"""
@@ -19,15 +22,18 @@ class MQTTPublisher:
 	GEN_TOPIC = "general"
 	SETUP = False
 	ACTIVE = False
+	GAME_STOP = False
 
-	def __init__(self, rest_receiver):
+	def __init__(self, gui, connection_handler, resource_handler):
 		"""
 		This init method initiates the client connection and starts the main
 		logic of the sender.
 		"""
 		self.client = self.connect_mqtt()
-		self.RestReceiver = rest_receiver
-		self.game_id = self.RestReceiver.game_id
+		self.connection_handler = connection_handler
+		self.resource_handler = resource_handler
+		self.ui = gui
+		self.perform_game_start()
 
 	def start(self):
 		"""
@@ -112,7 +118,11 @@ class MQTTPublisher:
 			if resp is not None:
 				msg = resp[0]
 				curr_topic = resp[1]
-				if evaluate_relevance(msg):
+				if str(msg).__contains__("winner"):
+					self.GAME_STOP = True
+					self.ui.show_frame(self.ui.frames[GameStartPage])
+					Hardware_Main.reset()
+				if evaluate_relevance(msg) and not self.GAME_STOP:
 					result = self.client.publish(curr_topic, str(msg))
 					result: [0, 1]
 					status = result[0]
@@ -132,6 +142,23 @@ class MQTTPublisher:
 			self.client.unsubscribe(key)
 		self.ACTIVE = False
 
+	def perform_game_start(self):
+		"""
+
+		:return:
+		"""
+		self.game_id = self.ui.frames[GameSelector].return_game()
+		self.RestReceiver = self.generate_game()
+		self.start()
+
+
+	def generate_game(self):
+		"""
+		This function generates REST Receivers for the given game.
+		:return: a REST Receiver Instance
+		"""
+		return RestReceiver(self.resource_handler, self.connection_handler, self.game_id)
+
 
 def evaluate_relevance(msg):
 	"""
@@ -139,7 +166,7 @@ def evaluate_relevance(msg):
 	:param msg:
 	:return:
 	"""
-	if dict(msg) in RELEVANT_ACTIONS:
+	if dict(msg)["type"] in RELEVANT_ACTIONS:
 		return True
 	return False
 

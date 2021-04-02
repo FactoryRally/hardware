@@ -12,7 +12,7 @@ if os.environ.get('DISPLAY', '') == '':
 selected_wlan = None
 
 
-class WlanSelector(tk.Tk):
+class NetworkUI(tk.Tk):
 	"""
 	This class provides a simple interface for the user to choose a game.
 	"""
@@ -21,7 +21,7 @@ class WlanSelector(tk.Tk):
 	def __init__(self):
 		# __init__ function for class Tk
 		tk.Tk.__init__(self)
-		self.title("Wifi-Selector")
+		self.title("FactoryRally")
 		super().geometry("640x320")
 
 		# creating a container
@@ -36,7 +36,7 @@ class WlanSelector(tk.Tk):
 
 		# iterating through a tuple consisting
 		# of the different page layouts
-		for F in (WlanChooser, PasswordPage, InformationDisplay):
+		for F in (WlanChooser, PasswordPage):
 			frame = F(container, self)
 
 			# initializing frame of that object from
@@ -145,38 +145,9 @@ class PasswordPage(tk.Frame):
 		:param ssid: network name
 		"""
 		estab, msg = (WifiScanner.connect_to_wlan(str(ssid), str(self.entry2.get())))
-		if estab:
-			self.controller.show_frame(InformationDisplay).pack()
-		else:
+		if not estab:
 			show_error_box(msg)
 
 
-class InformationDisplay(tk.Frame):
-	"""
-	This class is used to display the current game event on the Raspberry Pi.
-	"""
-
-	def __init__(self, parent, controller):
-		tk.Frame.__init__(self, master=parent)
-		self.controller = controller
-		self.text = tk.StringVar()
-		self.text1 = tk.StringVar()
-
-		self.text.set("Aktueller Spielzug:")
-		self.text1.set("")
-		self.label1 = tk.Label(self)
-		self.label1.configure(textvariable=self.text, font=(None, 24))
-		self.label1.place(x='130', y='80', anchor='center')
-		self.label2 = tk.Label(self)
-		self.label2.configure(textvariable=self.text1, font=(None, 35))
-		self.label2.place(x='160', y='130', anchor='center')
-
-	def update_information(self, msg):
-		"""
-		This method displays the current game event.
-		"""
-		self.text1.set(msg)
-
-
-app = WlanSelector()
+app = MainUI()
 app.mainloop()

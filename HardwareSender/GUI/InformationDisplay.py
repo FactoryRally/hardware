@@ -15,6 +15,7 @@ class NewprojectApp:
         self.label2 = tk.Label(self.frame1)
         self.label2.configure(textvariable=self.text1, font=(None, 35))
         self.label2.place(x='160', y='130', anchor='center')
+        self.button.place(x='320', y='220', anchor='center')
         self.frame1.configure(height='640', width='320')
         self.frame1.place(anchor='nw', x='0', y='0')
 

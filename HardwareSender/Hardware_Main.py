@@ -1,45 +1,55 @@
 from simple_rest_client.api import API
 from REST.ResourceHandler import ResourceHandler
 from REST.ConnectionHandler import ConnectionHandler
-from REST.RESTClient import RestReceiver
 from MQTT.MQTTPublisher import MQTTPublisher
-from GUI.GameSelector import GameSelector
+from GUI.GameGUI import GameGUI
 
+api_root_url = "http://localhost:5050/"
 
 class HardwareMain:
 	"""
 	This class initiates the REST Receiver and the MQTT Sender and
 	starts the game process.
 	"""
-	api_root_url = "http://localhost:5050/"
 
 	def __init__(self):
 		"""
 		This init method initiates the main class which provides the access to the REST API and
-		dynamically creates a thread for each game.
+		generates a MQTT Publisher instance.
 		"""
-		self.api = API(api_root_url=self.api_root_url, json_encode_body=True)
+		self.api = API(api_root_url=api_root_url, json_encode_body=True)
 		self.resource_handler = ResourceHandler(self.api)
-		self.resource_handler.add_resources()
+		self.setup_resourcehandler()
 		self.connection_handler = ConnectionHandler(self.api)
-		self.connection_handler.wait_for_api_availability()
-		self.connection_handler.wait_for_initialized_game()
+		self.setup_connectionhandler()
 		self.games = self.resource_handler.get_games()
-		self.resource_handler.check_for_lobby_game()
-		gui = GameSelector()
+		self.resource_handler.check_for_lobby_game(self.games)
+		gui = GameGUI()
 		gui.mainloop()
-		self.game_id = gui.value
-		self.game = self.generate_game(game_id=self.game_id)
-		publisher = MQTTPublisher(self.game)
+		publisher = MQTTPublisher(gui)
 		publisher.start()
 
-	def generate_game(self, game_id):
+	def setup_resourcehandler(self):
 		"""
-		This function generates REST Receivers for each game thats currently running ("LOBBY" status).
-		:return: a REST Receiver Instance
+		This method initializes the resource handler.
 		"""
-		return RestReceiver(self.resource_handler, self.connection_handler, game_id)
+		self.resource_handler.add_resources()
+
+	def setup_connectionhandler(self):
+		"""
+		This method initializes the connection handler.
+		"""
+		self.connection_handler.wait_for_api_availability()
+		self.connection_handler.wait_for_initialized_game()
+
+
+def reset():
+	"""
+	This method performs a reset upon game win.
+	:return:
+	"""
+	obj.__init__()
 
 
 if __name__ == '__main__':
-	HardwareMain()
+	obj = HardwareMain()
