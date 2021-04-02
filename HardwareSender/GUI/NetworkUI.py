@@ -99,7 +99,7 @@ def show_error_box(msg):
 	:param msg:
 	:return:
 	"""
-	messagebox.showerror("Wrong Password entered!", msg)
+	messagebox.showerror("Connection could not be established!", msg)
 
 
 def show_question_box(msg, obj):
