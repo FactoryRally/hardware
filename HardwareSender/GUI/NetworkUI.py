@@ -9,7 +9,7 @@ import os
 if os.environ.get('DISPLAY', '') == '':
 	os.environ.__setitem__('DISPLAY', ':0.0')
 
-selected_wlan = None
+SELECTED_WLAN = None
 
 
 class NetworkUI(tk.Tk):
@@ -84,9 +84,9 @@ class WlanChooser(tk.Frame):
 		"""
 		This method retrieves the selected game when the user presses the button.
 		"""
-		global selected_wlan
+		global SELECTED_WLAN
 		try:
-			selected_wlan = self.list.get(self.list.curselection())
+			SELECTED_WLAN = self.list.get(self.list.curselection())
 			self.controller.show_frame(PasswordPage)
 		except _tkinter.TclError as e:
 			tk.messagebox.showerror("Keine Auswahl getroffen!",
@@ -120,7 +120,7 @@ class PasswordPage(tk.Frame):
 	"""
 
 	def __init__(self, parent, controller):
-		global selected_wlan
+		global SELECTED_WLAN
 		self.controller = controller
 		tk.Frame.__init__(self, master=parent)
 		self.entry2 = tk.Entry(self)
@@ -136,7 +136,7 @@ class PasswordPage(tk.Frame):
 		self.button4.place(x=350, y=160)
 		self.button5 = tk.Button(self)
 		self.button5.configure(padx=60, pady=3, text='Verbinden',
-							   command=lambda: self.execute_password_check(ssid=selected_wlan))
+							   command=lambda: self.execute_password_check(ssid=SELECTED_WLAN))
 		self.button5.place(x=130, y=160)
 
 	def execute_password_check(self, ssid):
@@ -145,9 +145,11 @@ class PasswordPage(tk.Frame):
 		:param ssid: network name
 		"""
 		estab, msg = (WifiScanner.connect_to_wlan(str(ssid), str(self.entry2.get())))
-		if not estab:
+		if estab:
+			app.destroy()
+		else:
 			show_error_box(msg)
 
 
-app = MainUI()
+app = NetworkUI()
 app.mainloop()
