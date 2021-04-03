@@ -6,6 +6,11 @@ from tkinter import font
 from tkinter import messagebox
 import os
 
+"""
+This module is the networking UI which gets started on boot 
+and allows the user a simple interface to connect to a WLAN.
+"""
+
 if os.environ.get('DISPLAY', '') == '':
 	os.environ.__setitem__('DISPLAY', ':0.0')
 
@@ -62,7 +67,7 @@ class NetworkUI(tk.Tk):
 
 class WlanChooser(tk.Frame):
 	"""
-	This class displays all available networks through a list.
+	This class displays all available networks and lets a user choose his network.
 	"""
 
 	def __init__(self, parent, controller):
@@ -90,21 +95,20 @@ class WlanChooser(tk.Frame):
 			self.controller.show_frame(PasswordPage)
 		except _tkinter.TclError as e:
 			tk.messagebox.showerror("Keine Auswahl getroffen!",
-									"Bitte wählen Sie ein Netzwerk aus bevor Sie Netzwerk auswählen drücken!")  #
+									"Bitte wählen Sie ein Netzwerk aus bevor Sie Netzwerk auswählen drücken!")
 
 
 def show_error_box(msg):
 	"""
-	This method shows a error box with a given message.
-	:param msg:
-	:return:
+	This function shows a error box with a given message.
+	:param msg: the message to be displayed
 	"""
 	messagebox.showerror("Connection could not be established!", msg)
 
 
 def show_question_box(msg, obj):
 	"""
-	This method displays a question box with a given question.
+	This function displays a question box with a given question.
 	:param obj: wrapper for switching between frames
 	:param msg: the message thats to be displayed
 	"""
@@ -116,7 +120,7 @@ def show_question_box(msg, obj):
 
 class PasswordPage(tk.Frame):
 	"""
-	This class is a front-end for the user to put in their information.
+	This class is used to let the user input their password.
 	"""
 
 	def __init__(self, parent, controller):
@@ -141,7 +145,7 @@ class PasswordPage(tk.Frame):
 
 	def execute_password_check(self, ssid):
 		"""
-		This method connects to a given network.
+		This method connects to a given network using the given password.
 		:param ssid: network name
 		"""
 		estab, msg = (WifiScanner.connect_to_wlan(str(ssid), str(self.entry2.get())))

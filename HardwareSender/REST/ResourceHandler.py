@@ -101,16 +101,6 @@ class ResourceHandler:
 			print(f"[{game_id}]: Server Error! Please restart Server!")
 			sys.exit()
 
-	def get_new_games(self, current_games):
-		"""
-		This method compares the current games with the new games and
-		builds the difference.
-		:param current_games: a list of all current games
-		:return: the difference between all current games and the given games
-		"""
-		new_games = self.get_games()
-		return list(set(new_games) ^ set(current_games))
-
 	def get_all_robots(self, game_id, user_token):
 		"""
 		This method returns all robot ids.

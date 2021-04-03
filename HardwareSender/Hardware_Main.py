@@ -45,8 +45,7 @@ class HardwareMain:
 
 def reset():
 	"""
-	This method performs a reset upon game win.
-	:return:
+	This method performs a reset upon game end.
 	"""
 	obj.__init__()
 

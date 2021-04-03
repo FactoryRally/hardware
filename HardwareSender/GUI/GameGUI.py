@@ -2,7 +2,12 @@ import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
 
+"""
+This module is the UI which handles the whole game process. 
+"""
+
 SELECTED_GAME = ""
+
 
 class GameGUI(tk.Tk):
 	"""
@@ -54,20 +59,20 @@ class GameGUI(tk.Tk):
 
 class GameStartPage(tk.Frame):
 	"""
-	This class is used to display the current game event on the Raspberry Pi.
+	This class is used to tell it should generate a new Publisher as a new
+	game started.
 	"""
-
 	ACTIVE = False
 
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, master=parent)
 		self.controller = controller
 		self.text = tk.StringVar()
-		self.text.set("Spiel beendet!")
+		self.text.set("Ist ein Spiel gestartet?")
 		self.label1 = tk.Label(self)
 		self.label1.configure(textvariable=self.text, font=(None, 24))
 		self.label1.place(x='130', y='80', anchor='center')
-		self.button = tk.Button(self, text='Ein Spiel ist gestartet !', command=self.button_click)
+		self.button = tk.Button(self, text='Ein Spiel ist gestartet!', command=self.button_click)
 		self.button.place(x='320', y='220', anchor='center')
 
 	def button_click(self):
@@ -142,4 +147,8 @@ class GameSelector(tk.Frame):
 			tk.messagebox.showinfo("Information","Bitte wählen Sie ein anderes Spiel aus!")
 
 	def set_games(self, games):
+		"""
+		This method sets a given list.
+		:param games: the currently active games
+		"""
 		self.list.insert(0, *games)

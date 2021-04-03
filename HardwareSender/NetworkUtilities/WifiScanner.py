@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import subprocess
 
 
@@ -35,7 +36,7 @@ def evaluate_result(result):
     """
     This function evaluates whether the connection to a network was a success or failure.
     :param result: the output of the
-    :return:
+    :return: a list of success and msg
     """
     if not result == 0:
         if result == 10:

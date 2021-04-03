@@ -28,16 +28,19 @@ class RestReceiver:
 		"""
 		self.resource_handler = res
 		self.connection_handler = conn
+		# wait until a API is available
 		self.connection_handler.wait_for_api_availability()
+		# wait until there is a game in right state
 		self.connection_handler.wait_for_initialized_game()
 		self.game_id = game_id
+		# get consumer
 		self.user_token = quote(str(self.resource_handler.create_consumer(self.game_id)["pat"]))
-		print(f"[{self.game_id}]: {self.user_token}")
 		if self.resource_handler.get_game_state(self.game_id) != self.PLAYING_STATE:
 			self.connection_handler.wait_for_running_game(self.game_id, self.resource_handler)
 		self.players = self.resource_handler.get_players(self.game_id, self.user_token)
 		print(f"[{self.game_id}]: {self.resource_handler.get_game_state(self.game_id)}")
 		self._controlled_entities = {}
+		# generate player-robot mapping
 		self.generate_entity_mapping()
 		print(f"[{self.game_id}]: {self._controlled_entities}")
 
@@ -63,7 +66,7 @@ class RestReceiver:
 				if msg is None:
 					print(f"[{self.game_id}]: No Message available!")
 					return None
-				if self.check_if_all_player_have_entity() and self.check_if_event_is_action(msg):
+				if self.check_if_all_player_have_entity() and check_if_event_is_action(msg):
 					self.topic = self.evaluate_correct_topic(msg)
 				return list([msg, self.topic])
 			except NotFoundError as ex_n:
@@ -90,13 +93,14 @@ class RestReceiver:
 		"""
 		return len(self._controlled_entities) == len(self.players)
 
-	def check_if_event_is_action(self, msg):
-		"""
-		This method checks if the msg contains an entityID.
-		:param msg: current message
-		:return: returns whether or not the event is an action with entity
-		"""
-		return not dict(msg).__contains__('entityID')
+
+def check_if_event_is_action(msg):
+	"""
+	This function checks if the msg contains an entityID.
+	:param msg: current message
+	:return: returns whether or not the event is an action with entity
+	"""
+	return not dict(msg).__contains__('entityID')
 
 
 if __name__ == '__main__':

@@ -12,7 +12,7 @@ class ConnectionHandler:
 	def __init__(self, api):
 		"""
 		The init function takes the api as an argument and initiates the object.
-		:param api: the API
+		:param api: an API instance
 		"""
 		self.api = api
 
@@ -21,7 +21,6 @@ class ConnectionHandler:
 		This function waits until a game is started.
 		:param game_id: the given game
 		:param resource_handler: the resource handler
-		:return:
 		"""
 		while resource_handler.get_game_state(game_id) != self.game_started:
 			print(f"[{game_id}]: Game has not started yet!")
@@ -31,7 +30,6 @@ class ConnectionHandler:
 	def wait_for_initialized_game(self):
 		"""
 		This function waits until at least one game is initialized.
-		:return:
 		"""
 		while not self.api.games.get_games().body:
 			print("No game has been initialized")
@@ -41,7 +39,6 @@ class ConnectionHandler:
 	def wait_for_api_availability(self):
 		"""
 		This function waits until the API is reachable.
-		:return:
 		"""
 		while True:
 			try:

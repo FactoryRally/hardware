@@ -1,4 +1,7 @@
 paho-mqtt
 simple-rest-client
-requests
 netifaces
+subprocess
+tkinter
+_tkinter
+requests
