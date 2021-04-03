@@ -8,6 +8,10 @@ import Hardware_Main
 from GUI.GameGUI import GameSelector, GameStartPage
 from REST.RESTClient import RestReceiver
 
+"""
+This module is publishing the latest game event which can be performed by a real robot.
+"""
+
 RELEVANT_ACTIONS = []
 
 

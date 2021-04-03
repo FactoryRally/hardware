@@ -1,6 +1,11 @@
 from urllib.parse import quote
 from simple_rest_client.exceptions import NotFoundError
 
+"""
+This module uses the ResourceHandler to perform all ReST-Calls and handles the output accordingly. 
+The RestReceiver also performs the mapping from client to robot id.
+"""
+
 
 class RestReceiver:
 	"""

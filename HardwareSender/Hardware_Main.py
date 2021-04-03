@@ -4,7 +4,13 @@ from REST.ConnectionHandler import ConnectionHandler
 from MQTT.MQTTPublisher import MQTTPublisher
 from GUI.GameGUI import GameGUI
 
+"""
+This module is the entrypoint for the application, initializing all components and providing a reset method
+for game end (new game start). 
+"""
+
 api_root_url = "http://localhost:5050/"
+
 
 class HardwareMain:
 	"""
@@ -19,9 +25,9 @@ class HardwareMain:
 		"""
 		self.api = API(api_root_url=api_root_url, json_encode_body=True)
 		self.resource_handler = ResourceHandler(self.api)
-		self.setup_resourcehandler()
+		self.setup_resource_handler()
 		self.connection_handler = ConnectionHandler(self.api)
-		self.setup_connectionhandler()
+		self.setup_connection_handler()
 		self.games = self.resource_handler.get_games()
 		self.resource_handler.check_for_lobby_game(self.games)
 		gui = GameGUI()
@@ -29,13 +35,13 @@ class HardwareMain:
 		publisher = MQTTPublisher(gui)
 		publisher.start()
 
-	def setup_resourcehandler(self):
+	def setup_resource_handler(self):
 		"""
 		This method initializes the resource handler.
 		"""
 		self.resource_handler.add_resources()
 
-	def setup_connectionhandler(self):
+	def setup_connection_handler(self):
 		"""
 		This method initializes the connection handler.
 		"""

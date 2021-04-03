@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import _tkinter
 import tkinter as tk
-from NetworkUtilities import WifiScanner
+from NetworkUtilities import NetworkUtility
 from tkinter import font
 from tkinter import messagebox
 import os
@@ -75,7 +75,7 @@ class WlanChooser(tk.Frame):
 		tk.Frame.__init__(self, master=parent)
 		game_font = tk.font.Font(size=15)
 		self.list = tk.Listbox(self, width=30, height=5, font=game_font)
-		for num, ele in enumerate(WifiScanner.return_all_wifi_connections(), start=0):
+		for num, ele in enumerate(NetworkUtility.return_all_wifi_connections(), start=0):
 			self.list.insert(num, ele)
 		self.confirm_button = tk.Button(self, text="Netzwerk auswählen!", command=self.choose_wlan)
 		scrollbar = tk.Scrollbar(self)
@@ -148,7 +148,7 @@ class PasswordPage(tk.Frame):
 		This method connects to a given network using the given password.
 		:param ssid: network name
 		"""
-		estab, msg = (WifiScanner.connect_to_wlan(str(ssid), str(self.entry2.get())))
+		estab, msg = (NetworkUtility.connect_to_wlan(str(ssid), str(self.entry2.get())))
 		if estab:
 			app.destroy()
 		else:

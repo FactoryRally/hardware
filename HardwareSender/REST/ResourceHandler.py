@@ -3,6 +3,10 @@ from REST.Resources import GamesResource, PlayersResource, EventsResource, MapRe
 import sys
 import time
 
+"""
+This module uses the resources to abstractly perform ReST-Calls.
+"""
+
 
 class ResourceHandler:
 	"""

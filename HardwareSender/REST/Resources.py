@@ -1,5 +1,9 @@
 from simple_rest_client.resource import Resource
 
+"""
+This module provides resources, aka an abstraction method for each endpoint. 
+"""
+
 
 class GamesResource(Resource):
 	"""

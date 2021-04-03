@@ -1,13 +1,16 @@
 import random as rd
 from paho.mqtt import client as MQTTClient
 
+"""
+This module is an example and non functional implementation of a "real" robot.
+"""
+
 
 def execute_command(msg, event_type):
     """
-    This method executes the received command.
+    This method executes the received command and currently only is reacting to a MovementEvent.
     :param: msg: the decoded message containing game info
     :param: event_type: the given event type
-    :return:
     """
     msg_decoded = dict(msg)
     if event_type == "MovementEvent":
@@ -43,7 +46,7 @@ class MQTTReceiver:
 
     def connect_mqtt(self) -> MQTTClient:
         """
-        This function creates a client connection to the MQTT Broker.
+        This function creates a connection to the MQTT Broker.
         :return: a client instance
         """
 
@@ -67,7 +70,7 @@ class MQTTReceiver:
 
     def discover(self):
         """
-        This function is used for the discovery phase on the start of the game.
+        This function is used for the discovery phase on the start of the game, so each robot gets his virtual id.
         """
         msg = {"This client topic is": self.client_id}.__str__()
         result = self.client.publish(self.discover_topic, msg)
@@ -92,9 +95,9 @@ class MQTTReceiver:
             """
             This function is the callback which gets called when a
             message is received.
-            :param client: the client connection
-            :param userdata:
-            :param msg:
+            :param client: the client instance
+            :param userdata: the submitted userdata
+            :param msg: the transmitted message
             """
             msg_decoded = msg.payload.decode()
             if self.id_received:

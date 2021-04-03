@@ -1,6 +1,10 @@
 import requests
 import time
 
+"""
+This module is handling connection issues and checks.
+"""
+
 
 class ConnectionHandler:
 	"""

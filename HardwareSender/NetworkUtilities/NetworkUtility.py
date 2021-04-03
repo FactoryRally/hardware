@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import subprocess
 
+"""
+This module handles connecting to a network. 
+"""
+
 
 def return_all_wifi_connections():
     """
