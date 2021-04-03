@@ -1,5 +1,4 @@
 # Hardware Interface
-This repo contains the files the hardware interface aka for the Raspberry Pi.  
 The Hardware Interface is a MQTT Publisher as well as a ReST-Client consuming the [Game Controller](https://github.com/FactoryRally/game-controller).
 
 * [Installation and Setup](setup.md)
