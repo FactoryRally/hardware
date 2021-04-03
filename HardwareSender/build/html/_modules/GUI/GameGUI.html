@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GUI.GameGUI &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for GUI.GameGUI</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">tkinter</span> <span class="k">as</span> <span class="nn">tk</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="kn">import</span> <span class="n">font</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="kn">import</span> <span class="n">messagebox</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is the UI which handles the whole game process. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">SELECTED_GAME</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="GameGUI"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameGUI">[docs]</a><span class="k">class</span> <span class="nc">GameGUI</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class provides a simple interface for the user to choose a game.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># __init__ function for class tkinterApp</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c1"># __init__ function for class Tk</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;FactoryRally&quot;</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;640x320&quot;</span><span class="p">)</span>
+
+		<span class="c1"># creating a container</span>
+		<span class="n">container</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="n">container</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+		<span class="n">container</span><span class="o">.</span><span class="n">grid_rowconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">container</span><span class="o">.</span><span class="n">grid_columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+		<span class="c1"># initializing frames to an empty array</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">{}</span>
+
+		<span class="c1"># iterating through a tuple consisting</span>
+		<span class="c1"># of the different page layouts</span>
+		<span class="k">for</span> <span class="n">F</span> <span class="ow">in</span> <span class="p">(</span><span class="n">InformationDisplay</span><span class="p">,</span> <span class="n">GameStartPage</span><span class="p">,</span> <span class="n">GameSelector</span><span class="p">):</span>
+			<span class="n">frame</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+			<span class="c1"># initializing frame of that object from</span>
+			<span class="c1"># startpage, page1, page2 respectively with</span>
+			<span class="c1"># for loop</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">F</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span>
+
+			<span class="n">frame</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">show_frame</span><span class="p">(</span><span class="n">GameStartPage</span><span class="p">)</span>
+
+	<span class="c1"># to display the current frame passed as</span>
+	<span class="c1"># parameter</span>
+<div class="viewcode-block" id="GameGUI.show_frame"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameGUI.show_frame">[docs]</a>	<span class="k">def</span> <span class="nf">show_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cont</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method is used to switch between frames.</span>
+
+<span class="sd">		:param cont: the name of the frame which should be switched to</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">cont</span><span class="p">]</span>
+		<span class="n">frame</span><span class="o">.</span><span class="n">tkraise</span><span class="p">()</span>
+		<span class="n">frame</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="GameStartPage"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameStartPage">[docs]</a><span class="k">class</span> <span class="nc">GameStartPage</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class is used to tell it should generate a new Publisher as a new</span>
+<span class="sd">	game started.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">ACTIVE</span> <span class="o">=</span> <span class="kc">False</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">StringVar</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Ist ein Spiel gestartet?&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label1</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">textvariable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;130&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;80&#39;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Ein Spiel ist gestartet!&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">button_click</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;320&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;220&#39;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GameStartPage.button_click"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameStartPage.button_click">[docs]</a>	<span class="k">def</span> <span class="nf">button_click</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method sets the parameter active to true if a game is running</span>
+<span class="sd">		according to user input.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ACTIVE</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="GameStartPage.get_state"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameStartPage.get_state">[docs]</a>	<span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns the current state of the button. If it is pressed,</span>
+<span class="sd">		it resets it.</span>
+
+<span class="sd">		:return: whether or not the button is pressed</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">ACTIVE</span> <span class="o">=</span> <span class="kc">False</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">show_frame</span><span class="p">(</span><span class="n">GameSelector</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTIVE</span>
+		<span class="k">return</span> <span class="kc">False</span></div></div>
+
+
+<div class="viewcode-block" id="InformationDisplay"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.InformationDisplay">[docs]</a><span class="k">class</span> <span class="nc">InformationDisplay</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class is used to display the current game event on the Raspberry Pi.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">StringVar</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">text1</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">StringVar</span><span class="p">()</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;Aktueller Spielzug:&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">text1</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label1</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">textvariable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label1</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;130&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;80&#39;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label2</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">textvariable</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">text1</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label2</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;160&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;130&#39;</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InformationDisplay.update_information"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.InformationDisplay.update_information">[docs]</a>	<span class="k">def</span> <span class="nf">update_information</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method displays the current game event.</span>
+
+<span class="sd">		:param: msg: the current game event</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">text1</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GameSelector"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameSelector">[docs]</a><span class="k">class</span> <span class="nc">GameSelector</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class provides a simple interface for the user to choose a game.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+		<span class="n">game_font</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">Font</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Listbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">game_font</span><span class="p">,</span> <span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">confirm_button</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Spiel auswählen&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">return_game</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">confirm_button</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GameSelector.return_game"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameSelector.return_game">[docs]</a>	<span class="k">def</span> <span class="nf">return_game</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method retrieves the selected game when the user presses the button.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">global</span> <span class="n">SELECTED_GAME</span>
+		<span class="k">if</span> <span class="n">tk</span><span class="o">.</span><span class="n">messagebox</span><span class="o">.</span><span class="n">askquestion</span><span class="p">(</span><span class="s2">&quot;Question&quot;</span><span class="p">,</span> <span class="s2">&quot;Sind Sie sicher, dass Sie dieses Spiel wählen wollen?&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span><span class="p">:</span>
+			<span class="n">SELECTED_GAME</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">curselection</span><span class="p">())</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">tk</span><span class="o">.</span><span class="n">messagebox</span><span class="o">.</span><span class="n">showinfo</span><span class="p">(</span><span class="s2">&quot;Information&quot;</span><span class="p">,</span><span class="s2">&quot;Bitte wählen Sie ein anderes Spiel aus!&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GameSelector.set_games"><a class="viewcode-back" href="../../GUI.html#GUI.GameGUI.GameSelector.set_games">[docs]</a>	<span class="k">def</span> <span class="nf">set_games</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">games</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method sets a given list.</span>
+
+<span class="sd">		:param games: the currently active games</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="n">games</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

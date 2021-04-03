@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MQTTReceiver module &#8212; FactoryRally-Receiver 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="HardwareReceiver" href="modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-MQTTReceiver">
+<span id="mqttreceiver-module"></span><h1>MQTTReceiver module<a class="headerlink" href="#module-MQTTReceiver" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="MQTTReceiver.MQTTReceiver">
+<em class="property">class </em><code class="sig-prename descclassname">MQTTReceiver.</code><code class="sig-name descname">MQTTReceiver</code><a class="reference internal" href="_modules/MQTTReceiver.html#MQTTReceiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTTReceiver.MQTTReceiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class is an example implementation of a MQTT Receiver which
+receives and handles the transmitted data.</p>
+<dl class="py attribute">
+<dt id="MQTTReceiver.MQTTReceiver.broker">
+<code class="sig-name descname">broker</code><em class="property"> = 'broker.emqx.io'</em><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.broker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTTReceiver.MQTTReceiver.client_id">
+<code class="sig-name descname">client_id</code><em class="property"> = 'client-5636'</em><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="MQTTReceiver.MQTTReceiver.connect_mqtt">
+<code class="sig-name descname">connect_mqtt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTTReceiver.html#MQTTReceiver.connect_mqtt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.connect_mqtt" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a connection to the MQTT Broker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a client instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="MQTTReceiver.MQTTReceiver.discover">
+<code class="sig-name descname">discover</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTTReceiver.html#MQTTReceiver.discover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.discover" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is used for the discovery phase on the start of the game, so each robot gets his virtual id.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTTReceiver.MQTTReceiver.discover_topic">
+<code class="sig-name descname">discover_topic</code><em class="property"> = 'discover'</em><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.discover_topic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTTReceiver.MQTTReceiver.general_topic">
+<code class="sig-name descname">general_topic</code><em class="property"> = 'general'</em><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.general_topic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTTReceiver.MQTTReceiver.id_received">
+<code class="sig-name descname">id_received</code><em class="property"> = False</em><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.id_received" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTTReceiver.MQTTReceiver.port">
+<code class="sig-name descname">port</code><em class="property"> = 1883</em><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="MQTTReceiver.MQTTReceiver.subscribe">
+<code class="sig-name descname">subscribe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTTReceiver.html#MQTTReceiver.subscribe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.subscribe" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function handles the main logic of the receiver and
+prints out the according event for the robot.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTTReceiver.MQTTReceiver.topic">
+<code class="sig-name descname">topic</code><em class="property"> = ''</em><a class="headerlink" href="#MQTTReceiver.MQTTReceiver.topic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="MQTTReceiver.execute_command">
+<code class="sig-prename descclassname">MQTTReceiver.</code><code class="sig-name descname">execute_command</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">event_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTTReceiver.html#execute_command"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTTReceiver.execute_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method executes the received command and currently only is reacting to a MovementEvent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>msg: the decoded message containing game info</p>
+</dd>
+<dt class="field-even">Param</dt>
+<dd class="field-even"><p>event_type: the given event type</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">FactoryRally-Receiver</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">HardwareReceiver</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">MQTTReceiver module</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">HardwareReceiver</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">HardwareReceiver</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/MQTTReceiver.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

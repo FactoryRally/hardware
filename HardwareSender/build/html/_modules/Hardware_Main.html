@@ -1,0 +1,166 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hardware_Main &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for Hardware_Main</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">simple_rest_client.api</span> <span class="kn">import</span> <span class="n">API</span>
+<span class="kn">from</span> <span class="nn">REST.ResourceHandler</span> <span class="kn">import</span> <span class="n">ResourceHandler</span>
+<span class="kn">from</span> <span class="nn">REST.ConnectionHandler</span> <span class="kn">import</span> <span class="n">ConnectionHandler</span>
+<span class="kn">from</span> <span class="nn">MQTT.MQTTPublisher</span> <span class="kn">import</span> <span class="n">MQTTPublisher</span>
+<span class="kn">from</span> <span class="nn">GUI.GameGUI</span> <span class="kn">import</span> <span class="n">GameGUI</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is the entrypoint for the application, initializing all components and providing a reset method</span>
+<span class="sd">for game end (new game start). </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">api_root_url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:5050/&quot;</span>
+
+
+<div class="viewcode-block" id="HardwareMain"><a class="viewcode-back" href="../Hardware_Main.html#Hardware_Main.HardwareMain">[docs]</a><span class="k">class</span> <span class="nc">HardwareMain</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class initiates the REST Receiver and the MQTT Sender and</span>
+<span class="sd">	starts the game process.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This init method initiates the main class which provides the access to the REST API and</span>
+<span class="sd">		generates a MQTT Publisher instance.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">API</span><span class="p">(</span><span class="n">api_root_url</span><span class="o">=</span><span class="n">api_root_url</span><span class="p">,</span> <span class="n">json_encode_body</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span> <span class="o">=</span> <span class="n">ResourceHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">setup_resource_handler</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span> <span class="o">=</span> <span class="n">ConnectionHandler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">setup_connection_handler</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">games</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_games</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">check_for_lobby_game</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">games</span><span class="p">)</span>
+		<span class="n">gui</span> <span class="o">=</span> <span class="n">GameGUI</span><span class="p">()</span>
+		<span class="n">gui</span><span class="o">.</span><span class="n">mainloop</span><span class="p">()</span>
+		<span class="n">publisher</span> <span class="o">=</span> <span class="n">MQTTPublisher</span><span class="p">(</span><span class="n">gui</span><span class="p">)</span>
+		<span class="n">publisher</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="HardwareMain.setup_resource_handler"><a class="viewcode-back" href="../Hardware_Main.html#Hardware_Main.HardwareMain.setup_resource_handler">[docs]</a>	<span class="k">def</span> <span class="nf">setup_resource_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method initializes the resource handler.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">add_resources</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="HardwareMain.setup_connection_handler"><a class="viewcode-back" href="../Hardware_Main.html#Hardware_Main.HardwareMain.setup_connection_handler">[docs]</a>	<span class="k">def</span> <span class="nf">setup_connection_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method initializes the connection handler.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span><span class="o">.</span><span class="n">wait_for_api_availability</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span><span class="o">.</span><span class="n">wait_for_initialized_game</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="reset"><a class="viewcode-back" href="../Hardware_Main.html#Hardware_Main.reset">[docs]</a><span class="k">def</span> <span class="nf">reset</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This method performs a reset upon game end.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">obj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">obj</span> <span class="o">=</span> <span class="n">HardwareMain</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

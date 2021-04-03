@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NetworkUtilities.NetworkUtility &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for NetworkUtilities.NetworkUtility</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module handles connecting to a network. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="return_all_wifi_connections"><a class="viewcode-back" href="../../NetworkUtilities.html#NetworkUtilities.NetworkUtility.return_all_wifi_connections">[docs]</a><span class="k">def</span> <span class="nf">return_all_wifi_connections</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function returns all currently available wifi access points.</span>
+
+<span class="sd">    :return: list with all wifi SSIDs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;nmcli&#39;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;wifi&quot;</span><span class="p">,</span> <span class="s2">&quot;list&quot;</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">scan_out_lines</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">scan_out_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">each_line</span> <span class="ow">in</span> <span class="n">scan_out_lines</span><span class="p">:</span>
+        <span class="n">split_line</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">each_line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">e</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="n">line_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SSID&quot;</span><span class="p">:</span> <span class="n">split_line</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;RSSI&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">split_line</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                     <span class="s2">&quot;HT&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">split_line</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Y&quot;</span><span class="p">),</span> <span class="s2">&quot;CC&quot;</span><span class="p">:</span> <span class="n">split_line</span><span class="p">[</span><span class="mi">5</span><span class="p">]}</span>
+        <span class="n">scan_out_data</span><span class="p">[</span><span class="n">split_line</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">line_data</span>
+    <span class="n">ssid_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">scan_out_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">ssid_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scan_out_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SSID&#39;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ssid_list</span></div>
+
+
+<div class="viewcode-block" id="connect_to_wlan"><a class="viewcode-back" href="../../NetworkUtilities.html#NetworkUtilities.NetworkUtility.connect_to_wlan">[docs]</a><span class="k">def</span> <span class="nf">connect_to_wlan</span><span class="p">(</span><span class="n">ssid</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This functions connects to a network.</span>
+
+<span class="sd">    :param ssid: the SSID of the network</span>
+<span class="sd">    :param password: the WPA passphrase of the given network</span>
+
+<span class="sd">    :return: result of the command, e.g. if connection was successful</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;nmcli&#39;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;wifi&quot;</span><span class="p">,</span> <span class="s2">&quot;connect&quot;</span><span class="p">,</span> <span class="n">ssid</span><span class="p">,</span> <span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="n">password</span><span class="p">],</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">evaluate_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="evaluate_result"><a class="viewcode-back" href="../../NetworkUtilities.html#NetworkUtilities.NetworkUtility.evaluate_result">[docs]</a><span class="k">def</span> <span class="nf">evaluate_result</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function evaluates whether the connection to a network was a success or failure.</span>
+
+<span class="sd">    :param result: the output of the</span>
+
+<span class="sd">    :return: a list of success and msg</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;No Network with that SSID exists.&quot;</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;NetworkManager not running!&quot;</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Invalid user input!&quot;</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;Something went wrong!&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;Connection established!&quot;</span></div>
+
+
+
+
+
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

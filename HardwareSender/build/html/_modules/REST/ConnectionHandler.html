@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REST.ConnectionHandler &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for REST.ConnectionHandler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is handling connection issues and checks.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ConnectionHandler"><a class="viewcode-back" href="../../REST.html#REST.ConnectionHandler.ConnectionHandler">[docs]</a><span class="k">class</span> <span class="nc">ConnectionHandler</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class handles the connection to the API and manages different possible errors as well as it performs checks.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">api_root_url</span> <span class="o">=</span> <span class="s2">&quot;http://localhost:5050/&quot;</span>
+	<span class="n">game_started</span> <span class="o">=</span> <span class="s2">&quot;PLAYING&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		The init function takes the api as an argument and initiates the object.</span>
+
+<span class="sd">		:param api: an API instance</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">api</span>
+
+<div class="viewcode-block" id="ConnectionHandler.wait_for_running_game"><a class="viewcode-back" href="../../REST.html#REST.ConnectionHandler.ConnectionHandler.wait_for_running_game">[docs]</a>	<span class="k">def</span> <span class="nf">wait_for_running_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">,</span> <span class="n">resource_handler</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function waits until a game is started.</span>
+
+<span class="sd">		:param game_id: the given game</span>
+<span class="sd">		:param resource_handler: the resource handler</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">while</span> <span class="n">resource_handler</span><span class="o">.</span><span class="n">get_game_state</span><span class="p">(</span><span class="n">game_id</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_started</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Game has not started yet!&quot;</span><span class="p">)</span>
+			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+		<span class="k">return</span></div>
+
+<div class="viewcode-block" id="ConnectionHandler.wait_for_initialized_game"><a class="viewcode-back" href="../../REST.html#REST.ConnectionHandler.ConnectionHandler.wait_for_initialized_game">[docs]</a>	<span class="k">def</span> <span class="nf">wait_for_initialized_game</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function waits until at least one game is initialized.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">games</span><span class="o">.</span><span class="n">get_games</span><span class="p">()</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No game has been initialized&quot;</span><span class="p">)</span>
+			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+		<span class="k">return</span></div>
+
+<div class="viewcode-block" id="ConnectionHandler.wait_for_api_availability"><a class="viewcode-back" href="../../REST.html#REST.ConnectionHandler.ConnectionHandler.wait_for_api_availability">[docs]</a>	<span class="k">def</span> <span class="nf">wait_for_api_availability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function waits until the API is reachable.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api_root_url</span><span class="p">)</span>
+				<span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+				<span class="k">return</span>
+			<span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span><span class="p">,</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">Timeout</span><span class="p">):</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;URL is not up. Please start the game-server!&quot;</span><span class="p">)</span>
+			<span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">HTTPError</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;HTTP Server Error! Please restart the Server!&quot;</span><span class="p">)</span>
+			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

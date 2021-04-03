@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REST package &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="NetworkUtilities package" href="NetworkUtilities.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="rest-package">
+<h1>REST package<a class="headerlink" href="#rest-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-REST.ConnectionHandler">
+<span id="rest-connectionhandler-module"></span><h2>REST.ConnectionHandler module<a class="headerlink" href="#module-REST.ConnectionHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="REST.ConnectionHandler.ConnectionHandler">
+<em class="property">class </em><code class="sig-prename descclassname">REST.ConnectionHandler.</code><code class="sig-name descname">ConnectionHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ConnectionHandler.html#ConnectionHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ConnectionHandler.ConnectionHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class handles the connection to the API and manages different possible errors as well as it performs checks.</p>
+<dl class="py attribute">
+<dt id="REST.ConnectionHandler.ConnectionHandler.api_root_url">
+<code class="sig-name descname">api_root_url</code><em class="property"> = 'http://localhost:5050/'</em><a class="headerlink" href="#REST.ConnectionHandler.ConnectionHandler.api_root_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="REST.ConnectionHandler.ConnectionHandler.game_started">
+<code class="sig-name descname">game_started</code><em class="property"> = 'PLAYING'</em><a class="headerlink" href="#REST.ConnectionHandler.ConnectionHandler.game_started" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="REST.ConnectionHandler.ConnectionHandler.wait_for_api_availability">
+<code class="sig-name descname">wait_for_api_availability</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ConnectionHandler.html#ConnectionHandler.wait_for_api_availability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ConnectionHandler.ConnectionHandler.wait_for_api_availability" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function waits until the API is reachable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ConnectionHandler.ConnectionHandler.wait_for_initialized_game">
+<code class="sig-name descname">wait_for_initialized_game</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ConnectionHandler.html#ConnectionHandler.wait_for_initialized_game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ConnectionHandler.ConnectionHandler.wait_for_initialized_game" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function waits until at least one game is initialized.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ConnectionHandler.ConnectionHandler.wait_for_running_game">
+<code class="sig-name descname">wait_for_running_game</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em>, <em class="sig-param"><span class="n">resource_handler</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ConnectionHandler.html#ConnectionHandler.wait_for_running_game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ConnectionHandler.ConnectionHandler.wait_for_running_game" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function waits until a game is started.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>game_id</strong> – the given game</p></li>
+<li><p><strong>resource_handler</strong> – the resource handler</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-REST.RESTClient">
+<span id="rest-restclient-module"></span><h2>REST.RESTClient module<a class="headerlink" href="#module-REST.RESTClient" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="REST.RESTClient.RestReceiver">
+<em class="property">class </em><code class="sig-prename descclassname">REST.RESTClient.</code><code class="sig-name descname">RestReceiver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">res</span></em>, <em class="sig-param"><span class="n">conn</span></em>, <em class="sig-param"><span class="n">game_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/RESTClient.html#RestReceiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.RESTClient.RestReceiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class provides the interface to access the REST API and process the retrieved information.</p>
+<dl class="py attribute">
+<dt id="REST.RESTClient.RestReceiver.EXECUTION_PHASE">
+<code class="sig-name descname">EXECUTION_PHASE</code><em class="property"> = False</em><a class="headerlink" href="#REST.RESTClient.RestReceiver.EXECUTION_PHASE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="REST.RESTClient.RestReceiver.PLAYING_STATE">
+<code class="sig-name descname">PLAYING_STATE</code><em class="property"> = 'PLAYING'</em><a class="headerlink" href="#REST.RESTClient.RestReceiver.PLAYING_STATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="REST.RESTClient.RestReceiver.check_if_all_player_have_entity">
+<code class="sig-name descname">check_if_all_player_have_entity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/RESTClient.html#RestReceiver.check_if_all_player_have_entity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.RESTClient.RestReceiver.check_if_all_player_have_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method checks if all given players have their entity assigned.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>whether or not all players have an entity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.RESTClient.RestReceiver.evaluate_correct_topic">
+<code class="sig-name descname">evaluate_correct_topic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/RESTClient.html#RestReceiver.evaluate_correct_topic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.RESTClient.RestReceiver.evaluate_correct_topic" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns the corresponding topic of the given message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the controlling player of the given entity</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="REST.RESTClient.RestReceiver.event_types">
+<code class="sig-name descname">event_types</code><em class="property"> = ['movement', 'upgrade purchase', 'fill register', 'activate upgrade', 'lazer shot', 'game start', 'clear shop', 'fill shop', 'register clear', 'programming timer start', 'programming timer stop', 'random card distribution', 'take card event', 'activate checkpoint', 'game_phase_changed', 'game_round_phase_changed', 'pause', 'unpause', 'damage', 'lazer hit', 'push', 'join', 'lock in', 'robot_start_executing', 'heal', 'energy gain']</em><a class="headerlink" href="#REST.RESTClient.RestReceiver.event_types" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="REST.RESTClient.RestReceiver.generate_entity_mapping">
+<code class="sig-name descname">generate_entity_mapping</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/RESTClient.html#RestReceiver.generate_entity_mapping"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.RESTClient.RestReceiver.generate_entity_mapping" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method generates a dictionary containing the player id and the corresponding controlled entity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict of entity mapping</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.RESTClient.RestReceiver.get_controlled_entities">
+<code class="sig-name descname">get_controlled_entities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/RESTClient.html#RestReceiver.get_controlled_entities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.RESTClient.RestReceiver.get_controlled_entities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns the controlled entity dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>dict which contains the mapping of entity to player</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.RESTClient.RestReceiver.get_current_message">
+<code class="sig-name descname">get_current_message</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/RESTClient.html#RestReceiver.get_current_message"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.RESTClient.RestReceiver.get_current_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns the latest (pop) game event message (JSON).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>current message</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="REST.RESTClient.RestReceiver.topic">
+<code class="sig-name descname">topic</code><em class="property"> = 'general'</em><a class="headerlink" href="#REST.RESTClient.RestReceiver.topic" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="REST.RESTClient.check_if_event_is_action">
+<code class="sig-prename descclassname">REST.RESTClient.</code><code class="sig-name descname">check_if_event_is_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/RESTClient.html#check_if_event_is_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.RESTClient.check_if_event_is_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function checks if the msg contains an entityID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> – current message</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>returns whether or not the event is an action with entity</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-REST.ResourceHandler">
+<span id="rest-resourcehandler-module"></span><h2>REST.ResourceHandler module<a class="headerlink" href="#module-REST.ResourceHandler" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="REST.ResourceHandler.ResourceHandler">
+<em class="property">class </em><code class="sig-prename descclassname">REST.ResourceHandler.</code><code class="sig-name descname">ResourceHandler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">api</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class provides functions for interaction with the API resources.</p>
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.add_resources">
+<code class="sig-name descname">add_resources</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.add_resources"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.add_resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function connects the API with the resources.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.check_for_lobby_game">
+<code class="sig-name descname">check_for_lobby_game</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">games</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.check_for_lobby_game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.check_for_lobby_game" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method waits until there are games in LOBBY state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>games</strong> – all game ids that are currently active</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.create_consumer">
+<code class="sig-name descname">create_consumer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.create_consumer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.create_consumer" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method registers an consumer for hardware interaction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>game_id</strong> – the given game identifier</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Response from the server e.g. the pat and the id</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.get_all_robots">
+<code class="sig-name descname">get_all_robots</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em>, <em class="sig-param"><span class="n">user_token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.get_all_robots"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.get_all_robots" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns all robot ids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>game_id</strong> – the given game identifier</p></li>
+<li><p><strong>user_token</strong> – the given consumer access token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>all robot ids</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.get_controlled_entities">
+<code class="sig-name descname">get_controlled_entities</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em>, <em class="sig-param"><span class="n">player_id</span></em>, <em class="sig-param"><span class="n">user_token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.get_controlled_entities"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.get_controlled_entities" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns the controlled entities of the given player.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_token</strong> – the given consumer access token</p></li>
+<li><p><strong>game_id</strong> – the given game identifier</p></li>
+<li><p><strong>player_id</strong> – the given player id</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the id of the controlled robot from the given player</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.get_event_head">
+<code class="sig-name descname">get_event_head</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em>, <em class="sig-param"><span class="n">user_token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.get_event_head"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.get_event_head" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns the event head message from the API endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>game_id</strong> – the given game identifier</p></li>
+<li><p><strong>user_token</strong> – the given consumer access token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the latest event</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.get_game_state">
+<code class="sig-name descname">get_game_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.get_game_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.get_game_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns the current state of the given game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>game_id</strong> – the given game identifier</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>state of the game</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.get_games">
+<code class="sig-name descname">get_games</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.get_games"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.get_games" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns all currently active games.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the game ids of all active games</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.get_player">
+<code class="sig-name descname">get_player</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em>, <em class="sig-param"><span class="n">player_id</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.get_player"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.get_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns information about the given player in the given game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>player_id</strong> – the given player id</p></li>
+<li><p><strong>game_id</strong> – the given game identifier</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>information about the given player</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="REST.ResourceHandler.ResourceHandler.get_players">
+<code class="sig-name descname">get_players</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">game_id</span></em>, <em class="sig-param"><span class="n">user_token</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/ResourceHandler.html#ResourceHandler.get_players"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.ResourceHandler.ResourceHandler.get_players" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns all active players in the given (game_id) game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user_token</strong> – the given consumer access token</p></li>
+<li><p><strong>game_id</strong> – the given game identifier</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the player ids of all active players</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-REST.Resources">
+<span id="rest-resources-module"></span><h2>REST.Resources module<a class="headerlink" href="#module-REST.Resources" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="REST.Resources.ConsumersResource">
+<em class="property">class </em><code class="sig-prename descclassname">REST.Resources.</code><code class="sig-name descname">ConsumersResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/Resources.html#ConsumersResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.Resources.ConsumersResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">simple_rest_client.resource.Resource</span></code></p>
+<p>This class represents all resources which represent the consumer endpoint.</p>
+<dl class="py attribute">
+<dt id="REST.Resources.ConsumersResource.actions">
+<code class="sig-name descname">actions</code><em class="property"> = {'create_consumer': {'method': 'POST', 'url': 'games/{}/consumers'}}</em><a class="headerlink" href="#REST.Resources.ConsumersResource.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="REST.Resources.EventsResource">
+<em class="property">class </em><code class="sig-prename descclassname">REST.Resources.</code><code class="sig-name descname">EventsResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/Resources.html#EventsResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.Resources.EventsResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">simple_rest_client.resource.Resource</span></code></p>
+<p>This class represents all resources which represent the event handling endpoint.</p>
+<dl class="py attribute">
+<dt id="REST.Resources.EventsResource.actions">
+<code class="sig-name descname">actions</code><em class="property"> = {'get_event_head': {'method': 'GET', 'url': 'games/{}/events/head?pat={}'}}</em><a class="headerlink" href="#REST.Resources.EventsResource.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="REST.Resources.GamesResource">
+<em class="property">class </em><code class="sig-prename descclassname">REST.Resources.</code><code class="sig-name descname">GamesResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/Resources.html#GamesResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.Resources.GamesResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">simple_rest_client.resource.Resource</span></code></p>
+<p>This class represents all resources which represent the games endpoint.</p>
+<dl class="py attribute">
+<dt id="REST.Resources.GamesResource.actions">
+<code class="sig-name descname">actions</code><em class="property"> = {'get_game_actions': {'method': 'GET', 'url': 'games/{}/actions'}, 'get_game_status': {'method': 'GET', 'url': 'games/{}/status'}, 'get_games': {'method': 'GET', 'url': 'games'}}</em><a class="headerlink" href="#REST.Resources.GamesResource.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="REST.Resources.MapResource">
+<em class="property">class </em><code class="sig-prename descclassname">REST.Resources.</code><code class="sig-name descname">MapResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/Resources.html#MapResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.Resources.MapResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">simple_rest_client.resource.Resource</span></code></p>
+<p>This class represents all resources which represent the maps endpoint.</p>
+<dl class="py attribute">
+<dt id="REST.Resources.MapResource.actions">
+<code class="sig-name descname">actions</code><em class="property"> = {'get_map': {'method': 'GET', 'url': 'games/{}/map'}}</em><a class="headerlink" href="#REST.Resources.MapResource.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="REST.Resources.PlayersResource">
+<em class="property">class </em><code class="sig-prename descclassname">REST.Resources.</code><code class="sig-name descname">PlayersResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/Resources.html#PlayersResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.Resources.PlayersResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">simple_rest_client.resource.Resource</span></code></p>
+<p>This class represents all resources which represent the players endpoint.</p>
+<dl class="py attribute">
+<dt id="REST.Resources.PlayersResource.actions">
+<code class="sig-name descname">actions</code><em class="property"> = {'get_player': {'method': 'GET', 'url': 'games/{}/players/{}?pat={}'}, 'get_players': {'method': 'GET', 'url': 'games/{}/players?pat={}'}}</em><a class="headerlink" href="#REST.Resources.PlayersResource.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="REST.Resources.RobotsResource">
+<em class="property">class </em><code class="sig-prename descclassname">REST.Resources.</code><code class="sig-name descname">RobotsResource</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/REST/Resources.html#RobotsResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#REST.Resources.RobotsResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">simple_rest_client.resource.Resource</span></code></p>
+<p>This class represents all resources which represent the robots endpoint.</p>
+<dl class="py attribute">
+<dt id="REST.Resources.RobotsResource.actions">
+<code class="sig-name descname">actions</code><em class="property"> = {'get_all_robots': {'method': 'GET', 'url': 'games/{}/entities/robots?pat={}'}, 'get_robot_info': {'method': 'GET', 'url': 'games/{}/entities/robots/{}/info'}, 'get_upgrades': {'method': 'GET', 'url': 'games/{}/entities/robots/{}/upgrades'}}</em><a class="headerlink" href="#REST.Resources.RobotsResource.actions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-REST">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-REST" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">REST package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-REST.ConnectionHandler">REST.ConnectionHandler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-REST.RESTClient">REST.RESTClient module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-REST.ResourceHandler">REST.ResourceHandler module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-REST.Resources">REST.Resources module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-REST">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="NetworkUtilities.html" title="previous chapter">NetworkUtilities package</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/REST.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

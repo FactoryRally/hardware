@@ -52,6 +52,7 @@ class RestReceiver:
 	def generate_entity_mapping(self):
 		"""
 		This method generates a dictionary containing the player id and the corresponding controlled entity.
+
 		:return: dict of entity mapping
 		"""
 		mapping = {}
@@ -63,6 +64,7 @@ class RestReceiver:
 	def get_current_message(self):
 		"""
 		This method returns the latest (pop) game event message (JSON).
+
 		:return: current message
 		"""
 		if self.resource_handler.get_game_state(self.game_id):
@@ -80,6 +82,7 @@ class RestReceiver:
 	def evaluate_correct_topic(self, msg):
 		"""
 		This method returns the corresponding topic of the given message.
+
 		:return: the controlling player of the given entity
 		"""
 		return self._controlled_entities[msg.entityID]
@@ -87,6 +90,7 @@ class RestReceiver:
 	def get_controlled_entities(self):
 		"""
 		This method returns the controlled entity dict.
+
 		:return: dict which contains the mapping of entity to player
 		"""
 		return self._controlled_entities
@@ -94,6 +98,7 @@ class RestReceiver:
 	def check_if_all_player_have_entity(self):
 		"""
 		This method checks if all given players have their entity assigned.
+
 		:return: whether or not all players have an entity
 		"""
 		return len(self._controlled_entities) == len(self.players)
@@ -102,7 +107,9 @@ class RestReceiver:
 def check_if_event_is_action(msg):
 	"""
 	This function checks if the msg contains an entityID.
+
 	:param msg: current message
+
 	:return: returns whether or not the event is an action with entity
 	"""
 	return not dict(msg).__contains__('entityID')

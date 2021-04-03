@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MQTT.MQTTPublisher &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for MQTT.MQTTPublisher</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># library imports</span>
+<span class="kn">from</span> <span class="nn">paho.mqtt</span> <span class="kn">import</span> <span class="n">client</span> <span class="k">as</span> <span class="n">mqtt_client</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">Hardware_Main</span>
+<span class="c1"># Own module imports</span>
+<span class="kn">from</span> <span class="nn">GUI.GameGUI</span> <span class="kn">import</span> <span class="n">GameSelector</span><span class="p">,</span> <span class="n">GameStartPage</span>
+<span class="kn">from</span> <span class="nn">REST.RESTClient</span> <span class="kn">import</span> <span class="n">RestReceiver</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is publishing the latest game event which can be performed by a real robot.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">RELEVANT_ACTIONS</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+<div class="viewcode-block" id="MQTTPublisher"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher">[docs]</a><span class="k">class</span> <span class="nc">MQTTPublisher</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class is the MQTT Sender which pushes the current game event</span>
+<span class="sd">	to the broker with the according topic.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># broker address and port</span>
+	<span class="n">broker</span> <span class="o">=</span> <span class="s1">&#39;broker.emqx.io&#39;</span>
+	<span class="n">port</span> <span class="o">=</span> <span class="mi">1883</span>
+	<span class="c1"># random mqtt id</span>
+	<span class="n">client_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;python-mqtt-</span><span class="si">{</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+	<span class="c1"># topics for each player</span>
+	<span class="n">topics</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># ids for each robot</span>
+	<span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="c1"># general topic</span>
+	<span class="n">GEN_TOPIC</span> <span class="o">=</span> <span class="s2">&quot;general&quot;</span>
+	<span class="n">SETUP</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="n">ACTIVE</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="n">GAME_STOP</span> <span class="o">=</span> <span class="kc">False</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="p">,</span> <span class="n">connection_handler</span><span class="p">,</span> <span class="n">resource_handler</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This init method initiates the client connection and starts the main</span>
+<span class="sd">		logic of the sender.</span>
+
+<span class="sd">		:param: gui: ui instance to push messages</span>
+<span class="sd">		:param: connection_handler: connection handler instance to perform connection tasks</span>
+<span class="sd">		:param: resource_handler: resource handler to perform ReST calls</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect_mqtt</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span> <span class="o">=</span> <span class="n">connection_handler</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span> <span class="o">=</span> <span class="n">resource_handler</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">gui</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">perform_game_start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MQTTPublisher.start"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher.start">[docs]</a>	<span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method starts the discover process, after that starts the client loop</span>
+<span class="sd">		and publishing.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">discover_and_notify</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">publish</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">loop_forever</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MQTTPublisher.connect_mqtt"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher.connect_mqtt">[docs]</a>	<span class="k">def</span> <span class="nf">connect_mqtt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method creates a connection to the MQTT Broker.</span>
+
+<span class="sd">		:return: a client instance</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="k">def</span> <span class="nf">on_connect</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method is the callback for a connection try.</span>
+<span class="sd">			:param client: the client</span>
+<span class="sd">			:param userdata: the submitted userdata</span>
+<span class="sd">			:param flags: the submitted connection flags</span>
+<span class="sd">			:param rc: the response code</span>
+<span class="sd">			&quot;&quot;&quot;</span>
+			<span class="k">if</span> <span class="n">rc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Connected to MQTT Broker!&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Failed to connect, return code %d</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+
+		<span class="n">client</span> <span class="o">=</span> <span class="n">mqtt_client</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">client_id</span><span class="p">)</span>
+		<span class="n">client</span><span class="o">.</span><span class="n">on_connect</span> <span class="o">=</span> <span class="n">on_connect</span>
+		<span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">broker</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">client</span></div>
+
+<div class="viewcode-block" id="MQTTPublisher.discover_and_notify"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher.discover_and_notify">[docs]</a>	<span class="k">def</span> <span class="nf">discover_and_notify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method handles the discovery of all clients in the</span>
+<span class="sd">		current game and performs a mapping so each robots has its virtual id.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+
+		<span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+			<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">			This method is the callback which gets called when a</span>
+<span class="sd">			message is received.</span>
+<span class="sd">			:param client: the client connection</span>
+<span class="sd">			:param userdata: the submitted userdata</span>
+<span class="sd">			:param msg: received message</span>
+<span class="sd">			&quot;&quot;&quot;</span>
+
+			<span class="n">msg_decoded</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
+			<span class="c1"># when a message on general topic no mapping is needed</span>
+			<span class="k">if</span> <span class="n">msg</span><span class="o">.</span><span class="n">topic</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">GEN_TOPIC</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Received message on general: </span><span class="si">{</span><span class="n">msg_decoded</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="c1"># perform mapping</span>
+				<span class="k">if</span> <span class="ow">not</span> <span class="n">msg_decoded</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">SETUP</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Received `</span><span class="si">{</span><span class="n">msg_decoded</span><span class="si">}</span><span class="s2">` from `</span><span class="si">{</span><span class="n">msg</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">` topic&quot;</span><span class="p">)</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">())[</span><span class="mi">2</span><span class="p">])</span>
+					<span class="n">helper_topic</span> <span class="o">=</span> <span class="mi">1</span>
+					<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">RestReceiver</span><span class="o">.</span><span class="n">get_controlled_entities</span><span class="p">()</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">):</span>
+						<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">:</span>
+							<span class="bp">self</span><span class="o">.</span><span class="n">ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">helper_topic</span><span class="p">)</span>
+							<span class="n">helper_topic</span> <span class="o">+=</span> <span class="mi">1</span>
+							<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">helper_topic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+							<span class="n">client</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;Your client topic is&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">helper_topic</span><span class="p">)}</span><span class="o">.</span><span class="fm">__str__</span><span class="p">())</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">SETUP</span> <span class="o">=</span> <span class="kc">True</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ACTIVE</span> <span class="o">=</span> <span class="kc">True</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GEN_TOPIC</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">on_message</span> <span class="o">=</span> <span class="n">on_message</span>
+		<span class="c1"># wait until all robots have connected and received topic</span>
+		<span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">RestReceiver</span><span class="o">.</span><span class="n">get_controlled_entities</span><span class="p">()</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topics</span><span class="p">):</span>
+			<span class="k">continue</span></div>
+
+<div class="viewcode-block" id="MQTTPublisher.publish"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher.publish">[docs]</a>	<span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method publishes the current message to the broker with</span>
+<span class="sd">		the according topic if a game is currently active.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="c1"># asks the ReST each second for a new game update</span>
+		<span class="k">while</span> <span class="kc">True</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACTIVE</span><span class="p">:</span>
+			<span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">RestReceiver</span><span class="o">.</span><span class="n">get_current_message</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">resp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+				<span class="n">msg</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+				<span class="n">curr_topic</span> <span class="o">=</span> <span class="n">resp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+				<span class="c1"># when a game winner is declared, stop the process</span>
+				<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s2">&quot;winner&quot;</span><span class="p">):</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">GAME_STOP</span> <span class="o">=</span> <span class="kc">True</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">show_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">GameStartPage</span><span class="p">])</span>
+					<span class="n">Hardware_Main</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+				<span class="c1"># evaluate if message should be send or just be displayed</span>
+				<span class="k">if</span> <span class="n">evaluate_relevance</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">GAME_STOP</span><span class="p">:</span>
+					<span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="n">curr_topic</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+					<span class="n">result</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+					<span class="n">status</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+					<span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+						<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Send `</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">` to `</span><span class="si">{</span><span class="n">curr_topic</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+					<span class="k">else</span><span class="p">:</span>
+						<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Failed to send message to </span><span class="si">{</span><span class="n">curr_topic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MQTTPublisher.close_game"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher.close_game">[docs]</a>	<span class="k">def</span> <span class="nf">close_game</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method unsubscribes from all current clients/topics when a game ended.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">RestReceiver</span><span class="o">.</span><span class="n">get_controlled_entities</span><span class="p">():</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ACTIVE</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="MQTTPublisher.perform_game_start"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher.perform_game_start">[docs]</a>	<span class="k">def</span> <span class="nf">perform_game_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method performs a fresh start for a user selected game. It it also</span>
+<span class="sd">		called when a game is finished and a new game was chosen.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">GameSelector</span><span class="p">]</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_games</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">game_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">GameSelector</span><span class="p">]</span><span class="o">.</span><span class="n">return_game</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">RestReceiver</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_game</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="MQTTPublisher.generate_game"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.MQTTPublisher.generate_game">[docs]</a>	<span class="k">def</span> <span class="nf">generate_game</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function generates REST Receivers for the given game.</span>
+<span class="sd">		:return: a REST Receiver Instance</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="n">RestReceiver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="evaluate_relevance"><a class="viewcode-back" href="../../MQTT.html#MQTT.MQTTPublisher.evaluate_relevance">[docs]</a><span class="k">def</span> <span class="nf">evaluate_relevance</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function evaluates whether the message gets transported or not aka</span>
+<span class="sd">	if a real robot can perform it.</span>
+
+<span class="sd">	:param msg: the received message to check</span>
+
+<span class="sd">	:return: relevant or not</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="nb">dict</span><span class="p">(</span><span class="n">msg</span><span class="p">)[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">RELEVANT_ACTIONS</span><span class="p">:</span>
+		<span class="k">return</span> <span class="kc">True</span>
+	<span class="k">return</span> <span class="kc">False</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">MQTTPublisher</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -50,7 +50,8 @@ class GameGUI(tk.Tk):
 	def show_frame(self, cont):
 		"""
 		This method is used to switch between frames.
-		:param cont:
+
+		:param cont: the name of the frame which should be switched to
 		"""
 		frame = self.frames[cont]
 		frame.tkraise()
@@ -86,6 +87,7 @@ class GameStartPage(tk.Frame):
 		"""
 		This method returns the current state of the button. If it is pressed,
 		it resets it.
+
 		:return: whether or not the button is pressed
 		"""
 		if self.ACTIVE:
@@ -118,6 +120,8 @@ class InformationDisplay(tk.Frame):
 	def update_information(self, msg):
 		"""
 		This method displays the current game event.
+
+		:param: msg: the current game event
 		"""
 		self.text1.set(msg)
 
@@ -149,6 +153,7 @@ class GameSelector(tk.Frame):
 	def set_games(self, games):
 		"""
 		This method sets a given list.
+
 		:param games: the currently active games
 		"""
 		self.list.insert(0, *games)

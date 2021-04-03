@@ -9,6 +9,7 @@ This module is an example and non functional implementation of a "real" robot.
 def execute_command(msg, event_type):
     """
     This method executes the received command and currently only is reacting to a MovementEvent.
+
     :param: msg: the decoded message containing game info
     :param: event_type: the given event type
     """
@@ -28,7 +29,7 @@ class MQTTReceiver:
     broker = 'broker.emqx.io'
     port = 1883
     discover_topic = "discover"
-    topic = "general"
+    topic = ""
     general_topic = "general"
     # generate client ID with pub prefix randomly
     client_id = f'client-{rd.randint(0, 10000)}'
@@ -44,9 +45,10 @@ class MQTTReceiver:
         self.subscribe()
         self.client.loop_forever()
 
-    def connect_mqtt(self) -> MQTTClient:
+    def connect_mqtt(self):
         """
         This function creates a connection to the MQTT Broker.
+
         :return: a client instance
         """
 
@@ -104,7 +106,7 @@ class MQTTReceiver:
                 execute_command(msg_decoded)
             elif not self.id_received and str(msg_decoded).__contains__("Your client topic is"):
                 act_payload = eval(msg.payload.decode()).get('topic')
-                self.topic = "client"+act_payload
+                self.topic = "client-"+act_payload
                 client.subscribe(self.topic)
                 print(f"subscribed to `{self.topic}`")
                 self.id_received = True

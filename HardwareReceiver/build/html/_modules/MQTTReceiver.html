@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MQTTReceiver &#8212; FactoryRally-Receiver 1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for MQTTReceiver</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">random</span> <span class="k">as</span> <span class="nn">rd</span>
+<span class="kn">from</span> <span class="nn">paho.mqtt</span> <span class="kn">import</span> <span class="n">client</span> <span class="k">as</span> <span class="n">MQTTClient</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is an example and non functional implementation of a &quot;real&quot; robot.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="execute_command"><a class="viewcode-back" href="../MQTTReceiver.html#MQTTReceiver.execute_command">[docs]</a><span class="k">def</span> <span class="nf">execute_command</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">event_type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This method executes the received command and currently only is reacting to a MovementEvent.</span>
+
+<span class="sd">    :param: msg: the decoded message containing game info</span>
+<span class="sd">    :param: event_type: the given event type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">msg_decoded</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="s2">&quot;MovementEvent&quot;</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;perform_movement(</span><span class="si">{</span><span class="n">msg_decoded</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;entity&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">msg_decoded</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;direction&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
+              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">msg_decoded</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rotation&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">msg_decoded</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rotation-times&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">msg_decoded</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">,&quot;</span>
+              <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">msg_decoded</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;to&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MQTTReceiver"><a class="viewcode-back" href="../MQTTReceiver.html#MQTTReceiver.MQTTReceiver">[docs]</a><span class="k">class</span> <span class="nc">MQTTReceiver</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class is an example implementation of a MQTT Receiver which</span>
+<span class="sd">    receives and handles the transmitted data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">broker</span> <span class="o">=</span> <span class="s1">&#39;broker.emqx.io&#39;</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="mi">1883</span>
+    <span class="n">discover_topic</span> <span class="o">=</span> <span class="s2">&quot;discover&quot;</span>
+    <span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">general_topic</span> <span class="o">=</span> <span class="s2">&quot;general&quot;</span>
+    <span class="c1"># generate client ID with pub prefix randomly</span>
+    <span class="n">client_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;client-</span><span class="si">{</span><span class="n">rd</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">id_received</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This init function initiates the connection to the MQTT broker and</span>
+<span class="sd">        starts the transmission.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect_mqtt</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">discover</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subscribe</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">loop_forever</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MQTTReceiver.connect_mqtt"><a class="viewcode-back" href="../MQTTReceiver.html#MQTTReceiver.MQTTReceiver.connect_mqtt">[docs]</a>    <span class="k">def</span> <span class="nf">connect_mqtt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function creates a connection to the MQTT Broker.</span>
+
+<span class="sd">        :return: a client instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">on_connect</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function is the callback for a connection.</span>
+<span class="sd">            :param client: the client</span>
+<span class="sd">            :param userdata: the submitted userdata</span>
+<span class="sd">            :param flags: the submitted connection flags</span>
+<span class="sd">            :param rc: the response code</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">rc</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Connected to MQTT Broker!&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to connect, return code </span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">rc</span><span class="p">)</span>
+
+        <span class="n">client</span> <span class="o">=</span> <span class="n">MQTTClient</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">client_id</span><span class="p">)</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">on_connect</span> <span class="o">=</span> <span class="n">on_connect</span>
+        <span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">broker</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">client</span></div>
+
+<div class="viewcode-block" id="MQTTReceiver.discover"><a class="viewcode-back" href="../MQTTReceiver.html#MQTTReceiver.MQTTReceiver.discover">[docs]</a>    <span class="k">def</span> <span class="nf">discover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function is used for the discovery phase on the start of the game, so each robot gets his virtual id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;This client topic is&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_id</span><span class="p">}</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discover_topic</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Send `</span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">` to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">discover_topic</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discover_topic</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to send message to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">discover_topic</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">unsubscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">discover_topic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">general_topic</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">client_id</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MQTTReceiver.subscribe"><a class="viewcode-back" href="../MQTTReceiver.html#MQTTReceiver.MQTTReceiver.subscribe">[docs]</a>    <span class="k">def</span> <span class="nf">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function handles the main logic of the receiver and</span>
+<span class="sd">        prints out the according event for the robot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            This function is the callback which gets called when a</span>
+<span class="sd">            message is received.</span>
+<span class="sd">            :param client: the client instance</span>
+<span class="sd">            :param userdata: the submitted userdata</span>
+<span class="sd">            :param msg: the transmitted message</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="n">msg_decoded</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_received</span><span class="p">:</span>
+                <span class="n">execute_command</span><span class="p">(</span><span class="n">msg_decoded</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_received</span> <span class="ow">and</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg_decoded</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s2">&quot;Your client topic is&quot;</span><span class="p">):</span>
+                <span class="n">act_payload</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">payload</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;topic&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;client-&quot;</span><span class="o">+</span><span class="n">act_payload</span>
+                <span class="n">client</span><span class="o">.</span><span class="n">subscribe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;subscribed to `</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id_received</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">msg_decoded</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">on_message</span> <span class="o">=</span> <span class="n">on_message</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_received</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GAME PHASE not started!&quot;</span><span class="p">)</span></div></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">MQTTReceiver</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">FactoryRally-Receiver</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">HardwareReceiver</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

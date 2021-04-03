@@ -1,0 +1,297 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GUI package &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="MQTT package" href="MQTT.html" />
+    <link rel="prev" title="Hardware_Main module" href="Hardware_Main.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="gui-package">
+<h1>GUI package<a class="headerlink" href="#gui-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-GUI.GameGUI">
+<span id="gui-gamegui-module"></span><h2>GUI.GameGUI module<a class="headerlink" href="#module-GUI.GameGUI" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="GUI.GameGUI.GameGUI">
+<em class="property">class </em><code class="sig-prename descclassname">GUI.GameGUI.</code><code class="sig-name descname">GameGUI</code><a class="reference internal" href="_modules/GUI/GameGUI.html#GameGUI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameGUI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.Tk</span></code></p>
+<p>This class provides a simple interface for the user to choose a game.</p>
+<dl class="py method">
+<dt id="GUI.GameGUI.GameGUI.show_frame">
+<code class="sig-name descname">show_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cont</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#GameGUI.show_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameGUI.show_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used to switch between frames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cont</strong> – the name of the frame which should be switched to</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="GUI.GameGUI.GameSelector">
+<em class="property">class </em><code class="sig-prename descclassname">GUI.GameGUI.</code><code class="sig-name descname">GameSelector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span></em>, <em class="sig-param"><span class="n">controller</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#GameSelector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameSelector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.Frame</span></code></p>
+<p>This class provides a simple interface for the user to choose a game.</p>
+<dl class="py method">
+<dt id="GUI.GameGUI.GameSelector.return_game">
+<code class="sig-name descname">return_game</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#GameSelector.return_game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameSelector.return_game" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method retrieves the selected game when the user presses the button.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GUI.GameGUI.GameSelector.set_games">
+<code class="sig-name descname">set_games</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">games</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#GameSelector.set_games"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameSelector.set_games" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method sets a given list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>games</strong> – the currently active games</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="GUI.GameGUI.GameStartPage">
+<em class="property">class </em><code class="sig-prename descclassname">GUI.GameGUI.</code><code class="sig-name descname">GameStartPage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span></em>, <em class="sig-param"><span class="n">controller</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#GameStartPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameStartPage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.Frame</span></code></p>
+<p>This class is used to tell it should generate a new Publisher as a new
+game started.</p>
+<dl class="py attribute">
+<dt id="GUI.GameGUI.GameStartPage.ACTIVE">
+<code class="sig-name descname">ACTIVE</code><em class="property"> = False</em><a class="headerlink" href="#GUI.GameGUI.GameStartPage.ACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="GUI.GameGUI.GameStartPage.button_click">
+<code class="sig-name descname">button_click</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#GameStartPage.button_click"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameStartPage.button_click" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method sets the parameter active to true if a game is running
+according to user input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="GUI.GameGUI.GameStartPage.get_state">
+<code class="sig-name descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#GameStartPage.get_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.GameStartPage.get_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method returns the current state of the button. If it is pressed,
+it resets it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>whether or not the button is pressed</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="GUI.GameGUI.InformationDisplay">
+<em class="property">class </em><code class="sig-prename descclassname">GUI.GameGUI.</code><code class="sig-name descname">InformationDisplay</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span></em>, <em class="sig-param"><span class="n">controller</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#InformationDisplay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.InformationDisplay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.Frame</span></code></p>
+<p>This class is used to display the current game event on the Raspberry Pi.</p>
+<dl class="py method">
+<dt id="GUI.GameGUI.InformationDisplay.update_information">
+<code class="sig-name descname">update_information</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/GameGUI.html#InformationDisplay.update_information"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.GameGUI.InformationDisplay.update_information" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method displays the current game event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Param</dt>
+<dd class="field-odd"><p>msg: the current game event</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-GUI.NetworkUI">
+<span id="gui-networkui-module"></span><h2>GUI.NetworkUI module<a class="headerlink" href="#module-GUI.NetworkUI" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="GUI.NetworkUI.NetworkUI">
+<em class="property">class </em><code class="sig-prename descclassname">GUI.NetworkUI.</code><code class="sig-name descname">NetworkUI</code><a class="reference internal" href="_modules/GUI/NetworkUI.html#NetworkUI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.NetworkUI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.Tk</span></code></p>
+<p>This class provides a simple interface for the user to choose a game.</p>
+<dl class="py method">
+<dt id="GUI.NetworkUI.NetworkUI.show_frame">
+<code class="sig-name descname">show_frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cont</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/NetworkUI.html#NetworkUI.show_frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.NetworkUI.show_frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used to switch between frames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cont</strong> – the name of the frame which should be switched to</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="GUI.NetworkUI.PasswordPage">
+<em class="property">class </em><code class="sig-prename descclassname">GUI.NetworkUI.</code><code class="sig-name descname">PasswordPage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span></em>, <em class="sig-param"><span class="n">controller</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/NetworkUI.html#PasswordPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.PasswordPage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.Frame</span></code></p>
+<p>This class is used to let the user input their password.</p>
+<dl class="py method">
+<dt id="GUI.NetworkUI.PasswordPage.execute_password_check">
+<code class="sig-name descname">execute_password_check</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ssid</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/NetworkUI.html#PasswordPage.execute_password_check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.PasswordPage.execute_password_check" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method connects to a given network using the given password.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ssid</strong> – network name</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="GUI.NetworkUI.WlanChooser">
+<em class="property">class </em><code class="sig-prename descclassname">GUI.NetworkUI.</code><code class="sig-name descname">WlanChooser</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parent</span></em>, <em class="sig-param"><span class="n">controller</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/NetworkUI.html#WlanChooser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.WlanChooser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tkinter.Frame</span></code></p>
+<p>This class displays all available networks and lets a user choose his network.</p>
+<dl class="py method">
+<dt id="GUI.NetworkUI.WlanChooser.choose_wlan">
+<code class="sig-name descname">choose_wlan</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/NetworkUI.html#WlanChooser.choose_wlan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.WlanChooser.choose_wlan" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method retrieves the selected game when the user presses the button.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="GUI.NetworkUI.show_error_box">
+<code class="sig-prename descclassname">GUI.NetworkUI.</code><code class="sig-name descname">show_error_box</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/NetworkUI.html#show_error_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.show_error_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function shows a error box with a given message.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> – the message to be displayed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="GUI.NetworkUI.show_question_box">
+<code class="sig-prename descclassname">GUI.NetworkUI.</code><code class="sig-name descname">show_question_box</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="n">obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/GUI/NetworkUI.html#show_question_box"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#GUI.NetworkUI.show_question_box" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function displays a question box with a given question.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – wrapper for switching between frames</p></li>
+<li><p><strong>msg</strong> – the message thats to be displayed</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-GUI">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-GUI" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GUI package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-GUI.GameGUI">GUI.GameGUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-GUI.NetworkUI">GUI.NetworkUI module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-GUI">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Hardware_Main.html" title="previous chapter">Hardware_Main module</a></li>
+      <li>Next: <a href="MQTT.html" title="next chapter">MQTT package</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/GUI.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

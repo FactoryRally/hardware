@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GUI.NetworkUI &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for GUI.NetworkUI</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">import</span> <span class="nn">_tkinter</span>
+<span class="kn">import</span> <span class="nn">tkinter</span> <span class="k">as</span> <span class="nn">tk</span>
+<span class="kn">from</span> <span class="nn">NetworkUtilities</span> <span class="kn">import</span> <span class="n">NetworkUtility</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="kn">import</span> <span class="n">font</span>
+<span class="kn">from</span> <span class="nn">tkinter</span> <span class="kn">import</span> <span class="n">messagebox</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module is the networking UI which gets started on boot </span>
+<span class="sd">and allows the user a simple interface to connect to a WLAN.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DISPLAY&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="s1">&#39;DISPLAY&#39;</span><span class="p">,</span> <span class="s1">&#39;:0.0&#39;</span><span class="p">)</span>
+
+<span class="n">SELECTED_WLAN</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="NetworkUI"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.NetworkUI">[docs]</a><span class="k">class</span> <span class="nc">NetworkUI</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class provides a simple interface for the user to choose a game.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># __init__ function for class tkinterApp</span>
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="c1"># __init__ function for class Tk</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">Tk</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;FactoryRally&quot;</span><span class="p">)</span>
+		<span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">(</span><span class="s2">&quot;640x320&quot;</span><span class="p">)</span>
+
+		<span class="c1"># creating a container</span>
+		<span class="n">container</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="n">container</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;both&quot;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+		<span class="n">container</span><span class="o">.</span><span class="n">grid_rowconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">container</span><span class="o">.</span><span class="n">grid_columnconfigure</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+		<span class="c1"># initializing frames to an empty array</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">frames</span> <span class="o">=</span> <span class="p">{}</span>
+
+		<span class="c1"># iterating through a tuple consisting</span>
+		<span class="c1"># of the different page layouts</span>
+		<span class="k">for</span> <span class="n">F</span> <span class="ow">in</span> <span class="p">(</span><span class="n">WlanChooser</span><span class="p">,</span> <span class="n">PasswordPage</span><span class="p">):</span>
+			<span class="n">frame</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="n">container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+			<span class="c1"># initializing frame of that object from</span>
+			<span class="c1"># startpage, page1, page2 respectively with</span>
+			<span class="c1"># for loop</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">F</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span>
+
+			<span class="n">frame</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sticky</span><span class="o">=</span><span class="s2">&quot;nsew&quot;</span><span class="p">)</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">show_frame</span><span class="p">(</span><span class="n">WlanChooser</span><span class="p">)</span>
+
+	<span class="c1"># to display the current frame passed as</span>
+	<span class="c1"># parameter</span>
+<div class="viewcode-block" id="NetworkUI.show_frame"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.NetworkUI.show_frame">[docs]</a>	<span class="k">def</span> <span class="nf">show_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cont</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method is used to switch between frames.</span>
+
+<span class="sd">		:param cont: the name of the frame which should be switched to</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frames</span><span class="p">[</span><span class="n">cont</span><span class="p">]</span>
+		<span class="n">frame</span><span class="o">.</span><span class="n">tkraise</span><span class="p">()</span>
+		<span class="n">frame</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="WlanChooser"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.WlanChooser">[docs]</a><span class="k">class</span> <span class="nc">WlanChooser</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class displays all available networks and lets a user choose his network.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+		<span class="n">game_font</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">font</span><span class="o">.</span><span class="n">Font</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Listbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">game_font</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">ele</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">NetworkUtility</span><span class="o">.</span><span class="n">return_all_wifi_connections</span><span class="p">(),</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">ele</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">confirm_button</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Netzwerk auswählen!&quot;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">choose_wlan</span><span class="p">)</span>
+		<span class="n">scrollbar</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Scrollbar</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="n">scrollbar</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">yscrollcommand</span><span class="o">=</span><span class="n">scrollbar</span><span class="o">.</span><span class="n">set</span><span class="p">)</span>
+		<span class="n">scrollbar</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">yview</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="n">pady</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">confirm_button</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span>
+
+<div class="viewcode-block" id="WlanChooser.choose_wlan"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.WlanChooser.choose_wlan">[docs]</a>	<span class="k">def</span> <span class="nf">choose_wlan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method retrieves the selected game when the user presses the button.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">global</span> <span class="n">SELECTED_WLAN</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">SELECTED_WLAN</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">curselection</span><span class="p">())</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">show_frame</span><span class="p">(</span><span class="n">PasswordPage</span><span class="p">)</span>
+		<span class="k">except</span> <span class="n">_tkinter</span><span class="o">.</span><span class="n">TclError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="n">tk</span><span class="o">.</span><span class="n">messagebox</span><span class="o">.</span><span class="n">showerror</span><span class="p">(</span><span class="s2">&quot;Keine Auswahl getroffen!&quot;</span><span class="p">,</span>
+									<span class="s2">&quot;Bitte wählen Sie ein Netzwerk aus bevor Sie Netzwerk auswählen drücken!&quot;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="show_error_box"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.show_error_box">[docs]</a><span class="k">def</span> <span class="nf">show_error_box</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function shows a error box with a given message.</span>
+
+<span class="sd">	:param msg: the message to be displayed</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">messagebox</span><span class="o">.</span><span class="n">showerror</span><span class="p">(</span><span class="s2">&quot;Connection could not be established!&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="show_question_box"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.show_question_box">[docs]</a><span class="k">def</span> <span class="nf">show_question_box</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function displays a question box with a given question.</span>
+
+<span class="sd">	:param obj: wrapper for switching between frames</span>
+<span class="sd">	:param msg: the message thats to be displayed</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">if</span> <span class="n">tk</span><span class="o">.</span><span class="n">messagebox</span><span class="o">.</span><span class="n">askquestion</span><span class="p">(</span><span class="s2">&quot;Warning&quot;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;yes&#39;</span><span class="p">:</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">messagebox</span><span class="o">.</span><span class="n">showinfo</span><span class="p">(</span><span class="s1">&#39;Info&#39;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">obj</span><span class="o">.</span><span class="n">master</span><span class="o">.</span><span class="n">switch_frame</span><span class="p">(</span><span class="n">WlanChooser</span><span class="p">)</span><span class="o">.</span><span class="n">pack</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="PasswordPage"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.PasswordPage">[docs]</a><span class="k">class</span> <span class="nc">PasswordPage</span><span class="p">(</span><span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class is used to let the user input their password.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">controller</span><span class="p">):</span>
+		<span class="k">global</span> <span class="n">SELECTED_WLAN</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">controller</span> <span class="o">=</span> <span class="n">controller</span>
+		<span class="n">tk</span><span class="o">.</span><span class="n">Frame</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entry2</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Entry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">config</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="s1">&#39;13&#39;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">14</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">160</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">35</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">)</span>
+		<span class="n">_text_</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;entry2&#39;&#39;&#39;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entry2</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;end&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entry2</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">_text_</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">entry2</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">240</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button4</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button4</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">padx</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Abbrechen&#39;</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">controller</span><span class="o">.</span><span class="n">show_frame</span><span class="p">(</span><span class="n">WlanChooser</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button4</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">350</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">160</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button5</span> <span class="o">=</span> <span class="n">tk</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button5</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">padx</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">pady</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Verbinden&#39;</span><span class="p">,</span>
+							   <span class="n">command</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">execute_password_check</span><span class="p">(</span><span class="n">ssid</span><span class="o">=</span><span class="n">SELECTED_WLAN</span><span class="p">))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">button5</span><span class="o">.</span><span class="n">place</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="mi">130</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">160</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PasswordPage.execute_password_check"><a class="viewcode-back" href="../../GUI.html#GUI.NetworkUI.PasswordPage.execute_password_check">[docs]</a>	<span class="k">def</span> <span class="nf">execute_password_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ssid</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method connects to a given network using the given password.</span>
+
+<span class="sd">		:param ssid: network name</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">estab</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="n">NetworkUtility</span><span class="o">.</span><span class="n">connect_to_wlan</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">ssid</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">entry2</span><span class="o">.</span><span class="n">get</span><span class="p">())))</span>
+		<span class="k">if</span> <span class="n">estab</span><span class="p">:</span>
+			<span class="n">app</span><span class="o">.</span><span class="n">destroy</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">show_error_box</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

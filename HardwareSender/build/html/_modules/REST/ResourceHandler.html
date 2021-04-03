@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REST.ResourceHandler &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for REST.ResourceHandler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">simple_rest_client.exceptions</span> <span class="kn">import</span> <span class="n">ServerError</span><span class="p">,</span> <span class="n">NotFoundError</span>
+<span class="kn">from</span> <span class="nn">REST.Resources</span> <span class="kn">import</span> <span class="n">GamesResource</span><span class="p">,</span> <span class="n">PlayersResource</span><span class="p">,</span> <span class="n">EventsResource</span><span class="p">,</span> <span class="n">MapResource</span><span class="p">,</span> <span class="n">RobotsResource</span><span class="p">,</span> <span class="n">ConsumersResource</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module uses the resources to abstractly perform ReST-Calls.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="ResourceHandler"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler">[docs]</a><span class="k">class</span> <span class="nc">ResourceHandler</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class provides functions for interaction with the API resources.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		The init function takes the api as an argument and initiates the object.</span>
+
+<span class="sd">		:param api: the API</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">api</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">add_resources</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ResourceHandler.add_resources"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.add_resources">[docs]</a>	<span class="k">def</span> <span class="nf">add_resources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function connects the API with the resources.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">resource_name</span><span class="o">=</span><span class="s1">&#39;games&#39;</span><span class="p">,</span> <span class="n">resource_class</span><span class="o">=</span><span class="n">GamesResource</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">resource_name</span><span class="o">=</span><span class="s1">&#39;players&#39;</span><span class="p">,</span> <span class="n">resource_class</span><span class="o">=</span><span class="n">PlayersResource</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">resource_name</span><span class="o">=</span><span class="s1">&#39;events&#39;</span><span class="p">,</span> <span class="n">resource_class</span><span class="o">=</span><span class="n">EventsResource</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">resource_name</span><span class="o">=</span><span class="s1">&#39;maps&#39;</span><span class="p">,</span> <span class="n">resource_class</span><span class="o">=</span><span class="n">MapResource</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">resource_name</span><span class="o">=</span><span class="s1">&#39;robots&#39;</span><span class="p">,</span> <span class="n">resource_class</span><span class="o">=</span><span class="n">RobotsResource</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">add_resource</span><span class="p">(</span><span class="n">resource_name</span><span class="o">=</span><span class="s1">&#39;consumers&#39;</span><span class="p">,</span> <span class="n">resource_class</span><span class="o">=</span><span class="n">ConsumersResource</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.get_games"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.get_games">[docs]</a>	<span class="k">def</span> <span class="nf">get_games</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function returns all currently active games.</span>
+
+<span class="sd">		:return: the game ids of all active games</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">active_games</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">games</span><span class="o">.</span><span class="n">get_games</span><span class="p">()</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+		<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">active_games</span><span class="p">:</span>
+			<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_game_state</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;FINISHED&#39;</span><span class="p">:</span>
+				<span class="n">active_games</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">active_games</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.get_players"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.get_players">[docs]</a>	<span class="k">def</span> <span class="nf">get_players</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function returns all active players in the given (game_id) game.</span>
+
+<span class="sd">		:param user_token: the given consumer access token</span>
+<span class="sd">		:param game_id: the given game identifier</span>
+
+<span class="sd">		:return: the player ids of all active players</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">get_players</span><span class="p">(</span><span class="n">game_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">)</span><span class="o">.</span><span class="n">body</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.get_player"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.get_player">[docs]</a>	<span class="k">def</span> <span class="nf">get_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">,</span> <span class="n">player_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This function returns information about the given player in the given game.</span>
+
+<span class="sd">		:param player_id: the given player id</span>
+<span class="sd">		:param game_id: the given game identifier</span>
+
+<span class="sd">		:return: information about the given player</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">get_player</span><span class="p">(</span><span class="n">game_id</span><span class="p">,</span> <span class="n">player_id</span><span class="p">)</span><span class="o">.</span><span class="n">body</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.get_controlled_entities"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.get_controlled_entities">[docs]</a>	<span class="k">def</span> <span class="nf">get_controlled_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">,</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns the controlled entities of the given player.</span>
+
+<span class="sd">		:param user_token: the given consumer access token</span>
+<span class="sd">		:param game_id: the given game identifier</span>
+<span class="sd">		:param player_id: the given player id</span>
+
+<span class="sd">		:return: the id of the controlled robot from the given player</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">players</span><span class="o">.</span><span class="n">get_player</span><span class="p">(</span><span class="n">game_id</span><span class="p">,</span> <span class="n">player_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">)</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="s1">&#39;controlled_entities&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.get_game_state"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.get_game_state">[docs]</a>	<span class="k">def</span> <span class="nf">get_game_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns the current state of the given game.</span>
+
+<span class="sd">		:param game_id: the given game identifier</span>
+
+<span class="sd">		:return: state of the game</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">games</span><span class="o">.</span><span class="n">get_game_status</span><span class="p">(</span><span class="n">game_id</span><span class="p">)</span><span class="o">.</span><span class="n">body</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
+		<span class="k">except</span> <span class="n">NotFoundError</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: GAME not found&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.create_consumer"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.create_consumer">[docs]</a>	<span class="k">def</span> <span class="nf">create_consumer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method registers an consumer for hardware interaction.</span>
+
+<span class="sd">		:param game_id: the given game identifier</span>
+
+<span class="sd">		:return: Response from the server e.g. the pat and the id</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">consumers</span><span class="o">.</span><span class="n">create_consumer</span><span class="p">(</span><span class="n">game_id</span><span class="p">,</span> <span class="n">body</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;RESTConsumer&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Consumes the REST API&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">body</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.get_event_head"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.get_event_head">[docs]</a>	<span class="k">def</span> <span class="nf">get_event_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns the event head message from the API endpoint.</span>
+
+<span class="sd">		:param game_id: the given game identifier</span>
+<span class="sd">		:param user_token: the given consumer access token</span>
+
+<span class="sd">		:return: the latest event</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">get_event_head</span><span class="p">(</span><span class="n">game_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">)</span><span class="o">.</span><span class="n">body</span>
+		<span class="k">except</span> <span class="n">NotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="k">except</span> <span class="n">ServerError</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Server Error! Please restart Server!&quot;</span><span class="p">)</span>
+			<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.get_all_robots"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.get_all_robots">[docs]</a>	<span class="k">def</span> <span class="nf">get_all_robots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns all robot ids.</span>
+
+<span class="sd">		:param game_id: the given game identifier</span>
+<span class="sd">		:param user_token: the given consumer access token</span>
+
+<span class="sd">		:return: all robot ids</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">robots</span><span class="o">.</span><span class="n">get_all_robots</span><span class="p">(</span><span class="n">game_id</span><span class="p">,</span> <span class="n">user_token</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ResourceHandler.check_for_lobby_game"><a class="viewcode-back" href="../../REST.html#REST.ResourceHandler.ResourceHandler.check_for_lobby_game">[docs]</a>	<span class="k">def</span> <span class="nf">check_for_lobby_game</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">games</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method waits until there are games in LOBBY state.</span>
+
+<span class="sd">		:param games: all game ids that are currently active</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">while</span> <span class="ow">not</span> <span class="n">games</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You need to start a game! There are only FINISHED matches running!&quot;</span><span class="p">)</span>
+			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

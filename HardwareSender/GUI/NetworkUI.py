@@ -58,7 +58,8 @@ class NetworkUI(tk.Tk):
 	def show_frame(self, cont):
 		"""
 		This method is used to switch between frames.
-		:param cont:
+
+		:param cont: the name of the frame which should be switched to
 		"""
 		frame = self.frames[cont]
 		frame.tkraise()
@@ -101,6 +102,7 @@ class WlanChooser(tk.Frame):
 def show_error_box(msg):
 	"""
 	This function shows a error box with a given message.
+
 	:param msg: the message to be displayed
 	"""
 	messagebox.showerror("Connection could not be established!", msg)
@@ -109,6 +111,7 @@ def show_error_box(msg):
 def show_question_box(msg, obj):
 	"""
 	This function displays a question box with a given question.
+
 	:param obj: wrapper for switching between frames
 	:param msg: the message thats to be displayed
 	"""
@@ -146,6 +149,7 @@ class PasswordPage(tk.Frame):
 	def execute_password_check(self, ssid):
 		"""
 		This method connects to a given network using the given password.
+
 		:param ssid: network name
 		"""
 		estab, msg = (NetworkUtility.connect_to_wlan(str(ssid), str(self.entry2.get())))

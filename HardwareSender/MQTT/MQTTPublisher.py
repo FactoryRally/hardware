@@ -40,6 +40,7 @@ class MQTTPublisher:
 		"""
 		This init method initiates the client connection and starts the main
 		logic of the sender.
+
 		:param: gui: ui instance to push messages
 		:param: connection_handler: connection handler instance to perform connection tasks
 		:param: resource_handler: resource handler to perform ReST calls
@@ -59,9 +60,10 @@ class MQTTPublisher:
 		self.publish()
 		self.client.loop_forever()
 
-	def connect_mqtt(self) -> mqtt_client:
+	def connect_mqtt(self):
 		"""
 		This method creates a connection to the MQTT Broker.
+
 		:return: a client instance
 		"""
 
@@ -181,7 +183,9 @@ def evaluate_relevance(msg):
 	"""
 	This function evaluates whether the message gets transported or not aka
 	if a real robot can perform it.
+
 	:param msg: the received message to check
+
 	:return: relevant or not
 	"""
 	if dict(msg)["type"] in RELEVANT_ACTIONS:

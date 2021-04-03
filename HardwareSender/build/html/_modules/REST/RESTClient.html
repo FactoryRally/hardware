@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REST.RESTClient &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for REST.RESTClient</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">urllib.parse</span> <span class="kn">import</span> <span class="n">quote</span>
+<span class="kn">from</span> <span class="nn">simple_rest_client.exceptions</span> <span class="kn">import</span> <span class="n">NotFoundError</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module uses the ResourceHandler to perform all ReST-Calls and handles the output accordingly. </span>
+<span class="sd">The RestReceiver also performs the mapping from client to robot id.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="RestReceiver"><a class="viewcode-back" href="../../REST.html#REST.RESTClient.RestReceiver">[docs]</a><span class="k">class</span> <span class="nc">RestReceiver</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This class provides the interface to access the REST API and process the retrieved information.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="c1"># The different Event Types</span>
+	<span class="n">event_types</span> <span class="o">=</span> <span class="p">[</span>
+		<span class="s2">&quot;movement&quot;</span><span class="p">,</span> <span class="s2">&quot;upgrade purchase&quot;</span><span class="p">,</span> <span class="s2">&quot;fill register&quot;</span><span class="p">,</span> <span class="s2">&quot;activate upgrade&quot;</span><span class="p">,</span> <span class="s2">&quot;lazer shot&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;game start&quot;</span><span class="p">,</span> <span class="s2">&quot;clear shop&quot;</span><span class="p">,</span> <span class="s2">&quot;fill shop&quot;</span><span class="p">,</span> <span class="s2">&quot;register clear&quot;</span><span class="p">,</span> <span class="s2">&quot;programming timer start&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;programming timer stop&quot;</span><span class="p">,</span> <span class="s2">&quot;random card distribution&quot;</span><span class="p">,</span> <span class="s2">&quot;take card event&quot;</span><span class="p">,</span> <span class="s2">&quot;activate checkpoint&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;game_phase_changed&quot;</span><span class="p">,</span> <span class="s2">&quot;game_round_phase_changed&quot;</span><span class="p">,</span> <span class="s2">&quot;pause&quot;</span><span class="p">,</span> <span class="s2">&quot;unpause&quot;</span><span class="p">,</span> <span class="s2">&quot;damage&quot;</span><span class="p">,</span> <span class="s2">&quot;lazer hit&quot;</span><span class="p">,</span>
+		<span class="s2">&quot;push&quot;</span><span class="p">,</span> <span class="s2">&quot;join&quot;</span><span class="p">,</span> <span class="s2">&quot;lock in&quot;</span><span class="p">,</span> <span class="s2">&quot;robot_start_executing&quot;</span><span class="p">,</span> <span class="s2">&quot;heal&quot;</span><span class="p">,</span> <span class="s2">&quot;energy gain&quot;</span>
+	<span class="p">]</span>
+	<span class="c1"># state of game</span>
+	<span class="n">PLAYING_STATE</span> <span class="o">=</span> <span class="s2">&quot;PLAYING&quot;</span>
+	<span class="c1"># Whether or not game is in EXECUTION</span>
+	<span class="n">EXECUTION_PHASE</span> <span class="o">=</span> <span class="kc">False</span>
+	<span class="n">topic</span> <span class="o">=</span> <span class="s2">&quot;general&quot;</span>
+
+	<span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">game_id</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method initializes the REST client and the game. Furthermore it performs checks if the game is in the</span>
+<span class="sd">		right state and registers a consumer to consume the event endpoint.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span> <span class="o">=</span> <span class="n">res</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span> <span class="o">=</span> <span class="n">conn</span>
+		<span class="c1"># wait until a API is available</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span><span class="o">.</span><span class="n">wait_for_api_availability</span><span class="p">()</span>
+		<span class="c1"># wait until there is a game in right state</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span><span class="o">.</span><span class="n">wait_for_initialized_game</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">game_id</span> <span class="o">=</span> <span class="n">game_id</span>
+		<span class="c1"># get consumer</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">user_token</span> <span class="o">=</span> <span class="n">quote</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">create_consumer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">)[</span><span class="s2">&quot;pat&quot;</span><span class="p">]))</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_game_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">PLAYING_STATE</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">connection_handler</span><span class="o">.</span><span class="n">wait_for_running_game</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">players</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_players</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_token</span><span class="p">)</span>
+		<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_game_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">_controlled_entities</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="c1"># generate player-robot mapping</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">generate_entity_mapping</span><span class="p">()</span>
+		<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_controlled_entities</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RestReceiver.generate_entity_mapping"><a class="viewcode-back" href="../../REST.html#REST.RESTClient.RestReceiver.generate_entity_mapping">[docs]</a>	<span class="k">def</span> <span class="nf">generate_entity_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method generates a dictionary containing the player id and the corresponding controlled entity.</span>
+
+<span class="sd">		:return: dict of entity mapping</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">mapping</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">:</span>
+			<span class="n">mapping</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_controlled_entities</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">,</span> <span class="n">player</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_token</span><span class="p">)]</span> <span class="o">=</span> <span class="n">player</span>
+
+		<span class="bp">self</span><span class="o">.</span><span class="n">_controlled_entities</span> <span class="o">=</span> <span class="n">mapping</span></div>
+
+<div class="viewcode-block" id="RestReceiver.get_current_message"><a class="viewcode-back" href="../../REST.html#REST.RESTClient.RestReceiver.get_current_message">[docs]</a>	<span class="k">def</span> <span class="nf">get_current_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns the latest (pop) game event message (JSON).</span>
+
+<span class="sd">		:return: current message</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_game_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">):</span>
+			<span class="k">try</span><span class="p">:</span>
+				<span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resource_handler</span><span class="o">.</span><span class="n">get_event_head</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_token</span><span class="p">)</span>
+				<span class="k">if</span> <span class="n">msg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+					<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: No Message available!&quot;</span><span class="p">)</span>
+					<span class="k">return</span> <span class="kc">None</span>
+				<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_if_all_player_have_entity</span><span class="p">()</span> <span class="ow">and</span> <span class="n">check_if_event_is_action</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+					<span class="bp">self</span><span class="o">.</span><span class="n">topic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_correct_topic</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+				<span class="k">return</span> <span class="nb">list</span><span class="p">([</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">])</span>
+			<span class="k">except</span> <span class="n">NotFoundError</span> <span class="k">as</span> <span class="n">ex_n</span><span class="p">:</span>
+				<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">game_id</span><span class="si">}</span><span class="s2">]: Exception in RESTClient: </span><span class="si">{</span><span class="n">ex_n</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RestReceiver.evaluate_correct_topic"><a class="viewcode-back" href="../../REST.html#REST.RESTClient.RestReceiver.evaluate_correct_topic">[docs]</a>	<span class="k">def</span> <span class="nf">evaluate_correct_topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns the corresponding topic of the given message.</span>
+
+<span class="sd">		:return: the controlling player of the given entity</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled_entities</span><span class="p">[</span><span class="n">msg</span><span class="o">.</span><span class="n">entityID</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="RestReceiver.get_controlled_entities"><a class="viewcode-back" href="../../REST.html#REST.RESTClient.RestReceiver.get_controlled_entities">[docs]</a>	<span class="k">def</span> <span class="nf">get_controlled_entities</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method returns the controlled entity dict.</span>
+
+<span class="sd">		:return: dict which contains the mapping of entity to player</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_controlled_entities</span></div>
+
+<div class="viewcode-block" id="RestReceiver.check_if_all_player_have_entity"><a class="viewcode-back" href="../../REST.html#REST.RESTClient.RestReceiver.check_if_all_player_have_entity">[docs]</a>	<span class="k">def</span> <span class="nf">check_if_all_player_have_entity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		This method checks if all given players have their entity assigned.</span>
+
+<span class="sd">		:return: whether or not all players have an entity</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_controlled_entities</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">players</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="check_if_event_is_action"><a class="viewcode-back" href="../../REST.html#REST.RESTClient.check_if_event_is_action">[docs]</a><span class="k">def</span> <span class="nf">check_if_event_is_action</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	This function checks if the msg contains an entityID.</span>
+
+<span class="sd">	:param msg: current message</span>
+
+<span class="sd">	:return: returns whether or not the event is an action with entity</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="ow">not</span> <span class="nb">dict</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="s1">&#39;entityID&#39;</span><span class="p">)</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">RestReceiver</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../GUI.html">GUI package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../MQTT.html">MQTT package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MQTT package &#8212; FactoryRally-Sender 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="NetworkUtilities package" href="NetworkUtilities.html" />
+    <link rel="prev" title="GUI package" href="GUI.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="mqtt-package">
+<h1>MQTT package<a class="headerlink" href="#mqtt-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-MQTT">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-MQTT" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-MQTT.MQTTPublisher">
+<span id="mqtt-mqttpublisher-module"></span><h2>MQTT.MQTTPublisher module<a class="headerlink" href="#module-MQTT.MQTTPublisher" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher">
+<em class="property">class </em><code class="sig-prename descclassname">MQTT.MQTTPublisher.</code><code class="sig-name descname">MQTTPublisher</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gui</span></em>, <em class="sig-param"><span class="n">connection_handler</span></em>, <em class="sig-param"><span class="n">resource_handler</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>This class is the MQTT Sender which pushes the current game event
+to the broker with the according topic.</p>
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.ACTIVE">
+<code class="sig-name descname">ACTIVE</code><em class="property"> = False</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.ACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.GAME_STOP">
+<code class="sig-name descname">GAME_STOP</code><em class="property"> = False</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.GAME_STOP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.GEN_TOPIC">
+<code class="sig-name descname">GEN_TOPIC</code><em class="property"> = 'general'</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.GEN_TOPIC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.SETUP">
+<code class="sig-name descname">SETUP</code><em class="property"> = False</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.SETUP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.broker">
+<code class="sig-name descname">broker</code><em class="property"> = 'broker.emqx.io'</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.broker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.client_id">
+<code class="sig-name descname">client_id</code><em class="property"> = 'python-mqtt-5952'</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.client_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.close_game">
+<code class="sig-name descname">close_game</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher.close_game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.close_game" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method unsubscribes from all current clients/topics when a game ended.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.connect_mqtt">
+<code class="sig-name descname">connect_mqtt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher.connect_mqtt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.connect_mqtt" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method creates a connection to the MQTT Broker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a client instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.discover_and_notify">
+<code class="sig-name descname">discover_and_notify</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher.discover_and_notify"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.discover_and_notify" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method handles the discovery of all clients in the
+current game and performs a mapping so each robots has its virtual id.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.generate_game">
+<code class="sig-name descname">generate_game</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher.generate_game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.generate_game" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function generates REST Receivers for the given game.
+:return: a REST Receiver Instance</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.ids">
+<code class="sig-name descname">ids</code><em class="property"> = []</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.ids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.perform_game_start">
+<code class="sig-name descname">perform_game_start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher.perform_game_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.perform_game_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method performs a fresh start for a user selected game. It it also
+called when a game is finished and a new game was chosen.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.port">
+<code class="sig-name descname">port</code><em class="property"> = 1883</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.port" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.publish">
+<code class="sig-name descname">publish</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher.publish"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.publish" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method publishes the current message to the broker with
+the according topic if a game is currently active.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#MQTTPublisher.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method starts the discover process, after that starts the client loop
+and publishing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="MQTT.MQTTPublisher.MQTTPublisher.topics">
+<code class="sig-name descname">topics</code><em class="property"> = []</em><a class="headerlink" href="#MQTT.MQTTPublisher.MQTTPublisher.topics" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="MQTT.MQTTPublisher.evaluate_relevance">
+<code class="sig-prename descclassname">MQTT.MQTTPublisher.</code><code class="sig-name descname">evaluate_relevance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/MQTT/MQTTPublisher.html#evaluate_relevance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#MQTT.MQTTPublisher.evaluate_relevance" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function evaluates whether the message gets transported or not aka
+if a real robot can perform it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>msg</strong> – the received message to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>relevant or not</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">FactoryRally-Sender</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Hardware_Main.html">Hardware_Main module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GUI.html">GUI package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MQTT package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MQTT">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-MQTT.MQTTPublisher">MQTT.MQTTPublisher module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="NetworkUtilities.html">NetworkUtilities package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="REST.html">REST package</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="GUI.html" title="previous chapter">GUI package</a></li>
+      <li>Next: <a href="NetworkUtilities.html" title="next chapter">NetworkUtilities package</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, jkolesik.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.3.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/MQTT.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

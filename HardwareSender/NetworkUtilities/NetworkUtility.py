@@ -9,6 +9,7 @@ This module handles connecting to a network.
 def return_all_wifi_connections():
     """
     This function returns all currently available wifi access points.
+
     :return: list with all wifi SSIDs
     """
     result = subprocess.run(['nmcli', "d", "wifi", "list"], stdout=subprocess.PIPE)
@@ -28,8 +29,10 @@ def return_all_wifi_connections():
 def connect_to_wlan(ssid, password):
     """
     This functions connects to a network.
+
     :param ssid: the SSID of the network
     :param password: the WPA passphrase of the given network
+
     :return: result of the command, e.g. if connection was successful
     """
     result = subprocess.run(['nmcli', "d", "wifi", "connect", ssid, "password", password], stdout=subprocess.PIPE)
@@ -39,7 +42,9 @@ def connect_to_wlan(ssid, password):
 def evaluate_result(result):
     """
     This function evaluates whether the connection to a network was a success or failure.
+
     :param result: the output of the
+
     :return: a list of success and msg
     """
     if not result == 0:

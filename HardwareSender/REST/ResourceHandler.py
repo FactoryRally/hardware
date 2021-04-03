@@ -16,6 +16,7 @@ class ResourceHandler:
 	def __init__(self, api):
 		"""
 		The init function takes the api as an argument and initiates the object.
+
 		:param api: the API
 		"""
 		self.api = api
@@ -35,6 +36,7 @@ class ResourceHandler:
 	def get_games(self):
 		"""
 		This function returns all currently active games.
+
 		:return: the game ids of all active games
 		"""
 		active_games = list(self.api.games.get_games().body)
@@ -46,8 +48,10 @@ class ResourceHandler:
 	def get_players(self, game_id, user_token):
 		"""
 		This function returns all active players in the given (game_id) game.
+
 		:param user_token: the given consumer access token
 		:param game_id: the given game identifier
+
 		:return: the player ids of all active players
 		"""
 		return self.api.players.get_players(game_id, user_token).body
@@ -55,8 +59,10 @@ class ResourceHandler:
 	def get_player(self, game_id, player_id):
 		"""
 		This function returns information about the given player in the given game.
+
 		:param player_id: the given player id
 		:param game_id: the given game identifier
+
 		:return: information about the given player
 		"""
 		return self.api.players.get_player(game_id, player_id).body
@@ -64,9 +70,11 @@ class ResourceHandler:
 	def get_controlled_entities(self, game_id, player_id, user_token):
 		"""
 		This method returns the controlled entities of the given player.
+
 		:param user_token: the given consumer access token
 		:param game_id: the given game identifier
 		:param player_id: the given player id
+
 		:return: the id of the controlled robot from the given player
 		"""
 		return self.api.players.get_player(game_id, player_id, user_token).body['controlled_entities'][0]
@@ -74,7 +82,9 @@ class ResourceHandler:
 	def get_game_state(self, game_id):
 		"""
 		This method returns the current state of the given game.
+
 		:param game_id: the given game identifier
+
 		:return: state of the game
 		"""
 		try:
@@ -85,7 +95,9 @@ class ResourceHandler:
 	def create_consumer(self, game_id):
 		"""
 		This method registers an consumer for hardware interaction.
+
 		:param game_id: the given game identifier
+
 		:return: Response from the server e.g. the pat and the id
 		"""
 		return self.api.consumers.create_consumer(game_id, body={"name": "RESTConsumer", "description": "Consumes the REST API"}).body
@@ -93,8 +105,10 @@ class ResourceHandler:
 	def get_event_head(self, game_id, user_token):
 		"""
 		This method returns the event head message from the API endpoint.
+
 		:param game_id: the given game identifier
 		:param user_token: the given consumer access token
+
 		:return: the latest event
 		"""
 		try:
@@ -108,8 +122,10 @@ class ResourceHandler:
 	def get_all_robots(self, game_id, user_token):
 		"""
 		This method returns all robot ids.
+
 		:param game_id: the given game identifier
 		:param user_token: the given consumer access token
+
 		:return: all robot ids
 		"""
 		return self.api.robots.get_all_robots(game_id, user_token)
@@ -117,6 +133,7 @@ class ResourceHandler:
 	def check_for_lobby_game(self, games):
 		"""
 		This method waits until there are games in LOBBY state.
+
 		:param games: all game ids that are currently active
 		"""
 		while not games:
