@@ -1,4 +1,6 @@
 import tkinter as tk
+from tkinter import font
+from tkinter import messagebox
 
 SELECTED_GAME = ""
 
@@ -125,7 +127,7 @@ class GameSelector(tk.Frame):
 		self.controller = controller
 		game_font = tk.font.Font(size=18)
 		self.list = tk.Listbox(self, width=40, font=game_font, )
-		self.confirm_button = tk.Button(self, text="Choose Game", command=self.return_game)
+		self.confirm_button = tk.Button(self, text="Spiel auswählen", command=self.return_game)
 		self.list.pack()
 		self.confirm_button.pack()
 
@@ -134,8 +136,10 @@ class GameSelector(tk.Frame):
 		This method retrieves the selected game when the user presses the button.
 		"""
 		global SELECTED_GAME
-		SELECTED_GAME = self.list.get(self.list.curselection())
-		self.controller.show_frame(InformationDisplay).pack()
+		if tk.messagebox.askquestion("Question", "Sind Sie sicher, dass Sie dieses Spiel wählen wollen?") == 'yes':
+			SELECTED_GAME = self.list.get(self.list.curselection())
+		else:
+			tk.messagebox.showinfo("Information","Bitte wählen Sie ein anderes Spiel aus!")
 
 	def set_games(self, games):
 		self.list.insert(0, *games)

@@ -147,6 +147,7 @@ class MQTTPublisher:
 
 		:return:
 		"""
+		self.ui.frames[GameSelector].list.insert(0, *self.resource_handler.get_games())
 		self.game_id = self.ui.frames[GameSelector].return_game()
 		self.RestReceiver = self.generate_game()
 		self.start()
