@@ -1,3 +1,7 @@
 venv
 /testing.py
-
+HardwareSender/__pycache__
+HardwareSender/env
+HardwareSender/.idea
+HardwareReceiver/__pycache__
+HardwareReceiver/env
