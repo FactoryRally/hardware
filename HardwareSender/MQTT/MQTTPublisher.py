@@ -3,7 +3,6 @@
 from paho.mqtt import client as mqtt_client
 import random
 import time
-import Hardware_Main
 # Own module imports
 from GUI.GameGUI import GameSelector, GameStartPage
 from REST.RESTClient import RestReceiver
@@ -36,7 +35,7 @@ class MQTTPublisher:
 	ACTIVE = False
 	GAME_STOP = False
 
-	def __init__(self, gui, connection_handler, resource_handler):
+	def __init__(self, main, gui, connection_handler, resource_handler):
 		"""
 		This init method initiates the client connection and starts the main
 		logic of the sender.
@@ -45,6 +44,7 @@ class MQTTPublisher:
 		:param: connection_handler: connection handler instance to perform connection tasks
 		:param: resource_handler: resource handler to perform ReST calls
 		"""
+		self.main = main
 		self.client = self.connect_mqtt()
 		self.connection_handler = connection_handler
 		self.resource_handler = resource_handler
@@ -140,7 +140,7 @@ class MQTTPublisher:
 				if str(msg).__contains__("winner"):
 					self.GAME_STOP = True
 					self.ui.show_frame(self.ui.frames[GameStartPage])
-					Hardware_Main.reset()
+					self.main.reset()
 				# evaluate if message should be send or just be displayed
 				if evaluate_relevance(msg) and not self.GAME_STOP:
 					result = self.client.publish(curr_topic, str(msg))

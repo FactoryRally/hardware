@@ -32,7 +32,7 @@ class HardwareMain:
 		self.resource_handler.check_for_lobby_game(self.games)
 		gui = GameGUI()
 		gui.mainloop()
-		publisher = MQTTPublisher(gui)
+		publisher = MQTTPublisher(gui, self)
 		publisher.start()
 
 	def setup_resource_handler(self):
