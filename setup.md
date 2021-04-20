@@ -15,3 +15,11 @@ If everything needed is installed, activate the venv and run the application.
 source env/bin/activate
 python3 Hardware_main.py
 ```
+
+## Own Raspberry Pis
+
+On the default Raspberry Pi from us, the application is starting on boot, this can be enabled on any device through by adding the following line at the bottom of `/etc/profile`. 
+
+```
+sudo python3 /path/to/file.py
+```
