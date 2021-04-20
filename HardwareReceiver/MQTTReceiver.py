@@ -26,7 +26,7 @@ class MQTTReceiver:
     receives and handles the transmitted data.
     """
 
-    broker = 'broker.emqx.io'
+    broker = 'ip-address'
     port = 1883
     discover_topic = "discover"
     topic = ""

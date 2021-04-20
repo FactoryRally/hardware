@@ -11,7 +11,7 @@ from REST.RESTClient import RestReceiver
 This module is publishing the latest game event which can be performed by a real robot.
 """
 
-RELEVANT_ACTIONS = []
+RELEVANT_ACTIONS = [MOVEMENT_EVENT]
 
 
 class MQTTPublisher:
@@ -21,7 +21,7 @@ class MQTTPublisher:
 	"""
 
 	# broker address and port
-	broker = 'broker.emqx.io'
+	broker = 'localhost'
 	port = 1883
 	# random mqtt id
 	client_id = f'python-mqtt-{random.randint(0, 10000)}'
