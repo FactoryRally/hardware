@@ -22,7 +22,7 @@ class MQTTPublisher:
 	"""
 
 	# broker address and port
-	broker = 'broker.emqx.io'
+	broker = 'localhost'
 	port = 1883
 	# random mqtt id
 	client_id = f'python-mqtt-{random.randint(0, 10000)}'
