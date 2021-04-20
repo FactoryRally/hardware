@@ -12,7 +12,7 @@ from REST.RESTClient import RestReceiver
 This module is publishing the latest game event which can be performed by a real robot.
 """
 
-RELEVANT_ACTIONS = [GAME_START,GAME_END_MOVEMENT_EVENT]
+RELEVANT_ACTIONS = [MOVEMENT_EVENT]
 
 
 class MQTTPublisher:
