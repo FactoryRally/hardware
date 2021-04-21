@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 # library imports
+import threading
+import time
 from paho.mqtt import client as mqtt_client
 import random
 import time
 # Own module imports
+from GUI import GameGUI
 from GUI.GameGUI import GameSelector, GameStartPage
+from GUI.InformationDisplay import InformationDisplay
 from REST.RESTClient import RestReceiver
 
 """
@@ -14,14 +18,14 @@ This module is publishing the latest game event which can be performed by a real
 RELEVANT_ACTIONS = ["MOVEMENT_EVENT"]
 
 
-class MQTTPublisher:
+class MQTTPublisher(threading.Thread):
 	"""
 	This class is the MQTT Sender which pushes the current game event
 	to the broker with the according topic.
 	"""
 
 	# broker address and port
-	broker = 'localhost'
+	broker = 'broker.emqx.io'
 	port = 1883
 	# random mqtt id
 	client_id = f'python-mqtt-{random.randint(0, 10000)}'
@@ -35,7 +39,7 @@ class MQTTPublisher:
 	ACTIVE = False
 	GAME_STOP = False
 
-	def __init__(self, main, gui, connection_handler, resource_handler):
+	def __init__(self, gui, main, connection_handler, resource_handler, game):
 		"""
 		This init method initiates the client connection and starts the main
 		logic of the sender.
@@ -44,14 +48,16 @@ class MQTTPublisher:
 		:param: connection_handler: connection handler instance to perform connection tasks
 		:param: resource_handler: resource handler to perform ReST calls
 		"""
+		super().__init__()
 		self.main = main
 		self.client = self.connect_mqtt()
 		self.connection_handler = connection_handler
 		self.resource_handler = resource_handler
 		self.ui = gui
+		self.game = game
 		self.perform_game_start()
 
-	def start(self):
+	def run(self):
 		"""
 		This method starts the discover process, after that starts the client loop
 		and publishing.
@@ -76,9 +82,9 @@ class MQTTPublisher:
 			:param rc: the response code
 			"""
 			if rc == 0:
-				print(f"[{self.game_id}]: Connected to MQTT Broker!")
+				print(f"[{self.game}]: Connected to MQTT Broker!")
 			else:
-				print(f"[{self.game_id}]: Failed to connect, return code %d\n", rc)
+				print(f"[{self.game}]: Failed to connect, return code %d\n", rc)
 
 		client = mqtt_client.Client(self.client_id)
 		client.on_connect = on_connect
@@ -103,18 +109,18 @@ class MQTTPublisher:
 			msg_decoded = str(msg.payload.decode())
 			# when a message on general topic no mapping is needed
 			if msg.topic == self.GEN_TOPIC:
-				print(f"[{self.game_id}]: Received message on general: {msg_decoded}")
+				print(f"[{self.game}]: Received message on general: {msg_decoded}")
 			else:
 				# perform mapping
 				if not msg_decoded.__contains__('type') and self.SETUP is False:
-					print(f"[{self.game_id}]: Received `{msg_decoded}` from `{msg.topic}` topic")
+					print(f"[{self.game}]: Received `{msg_decoded}` from `{msg.topic}` topic")
 					self.topics.append(eval(msg.payload.decode())[2])
 					helper_topic = 1
 					if self.RestReceiver.get_controlled_entities() == len(self.topics):
 						for x in self.topics:
 							self.ids.append(helper_topic)
 							helper_topic += 1
-							print(f"[{self.game_id}]: {helper_topic}")
+							print(f"[{self.game}]: {helper_topic}")
 							client.publish(x, {"Your client topic is": str(helper_topic)}.__str__())
 					self.SETUP = True
 					self.ACTIVE = True
@@ -147,9 +153,9 @@ class MQTTPublisher:
 					result: [0, 1]
 					status = result[0]
 					if status == 0:
-						print(f"[{self.game_id}]: Send `{msg}` to `{curr_topic}`")
+						print(f"[{self.game}]: Send `{msg}` to `{curr_topic}`")
 					else:
-						print(f"[{self.game_id}]: Failed to send message to {curr_topic}")
+						print(f"[{self.game}]: Failed to send message to {curr_topic}")
 
 			time.sleep(1)
 
@@ -166,17 +172,17 @@ class MQTTPublisher:
 		This method performs a fresh start for a user selected game. It it also
 		called when a game is finished and a new game was chosen.
 		"""
-		self.ui.frames[GameSelector].list.insert(0, *self.resource_handler.get_games())
-		self.game_id = self.ui.frames[GameSelector].return_game()
 		self.RestReceiver = self.generate_game()
-		self.start()
+		self.informationDisplay = InformationDisplay()
+		self.informationDisplay.mainloop()
+		self.run()
 
 	def generate_game(self):
 		"""
 		This function generates REST Receivers for the given game.
 		:return: a REST Receiver Instance
 		"""
-		return RestReceiver(self.resource_handler, self.connection_handler, self.game_id)
+		return RestReceiver(self.resource_handler, self.connection_handler, self.game)
 
 
 def evaluate_relevance(msg):

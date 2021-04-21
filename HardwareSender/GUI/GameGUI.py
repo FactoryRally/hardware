@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
+import time
 
 """
 This module is the UI which handles the whole game process. 
@@ -15,12 +16,11 @@ class GameGUI(tk.Tk):
 	"""
 
 	# __init__ function for class tkinterApp
-	def __init__(self):
+	def __init__(self, main):
 		# __init__ function for class Tk
 		tk.Tk.__init__(self)
 		self.title("FactoryRally")
 		super().geometry("640x320")
-
 		# creating a container
 		container = tk.Frame(self)
 		container.pack(side="top", fill="both", expand=True)
@@ -28,12 +28,14 @@ class GameGUI(tk.Tk):
 		container.grid_rowconfigure(0, weight=1)
 		container.grid_columnconfigure(0, weight=1)
 
+		self.main = main
+
 		# initializing frames to an empty array
 		self.frames = {}
 
 		# iterating through a tuple consisting
 		# of the different page layouts
-		for F in (InformationDisplay, GameStartPage, GameSelector):
+		for F in (GameStartPage, GameSelector):
 			frame = F(container, self)
 
 			# initializing frame of that object from
@@ -57,6 +59,9 @@ class GameGUI(tk.Tk):
 		frame.tkraise()
 		frame.update()
 
+	def get_game(self):
+		return SELECTED_GAME
+
 
 class GameStartPage(tk.Frame):
 	"""
@@ -76,12 +81,14 @@ class GameStartPage(tk.Frame):
 		self.button = tk.Button(self, text='Ein Spiel ist gestartet!', command=self.button_click)
 		self.button.place(x='320', y='220', anchor='center')
 
+
 	def button_click(self):
 		"""
 		This method sets the parameter active to true if a game is running
 		according to user input.
 		"""
 		self.ACTIVE = True
+		self.controller.show_frame(GameSelector)
 
 	def get_state(self):
 		"""
@@ -92,39 +99,9 @@ class GameStartPage(tk.Frame):
 		"""
 		if self.ACTIVE:
 			self.ACTIVE = False
-			self.controller.show_frame(GameSelector).pack()
+			self.controller.show_frame(GameSelector)
 			return self.ACTIVE
 		return False
-
-
-class InformationDisplay(tk.Frame):
-	"""
-	This class is used to display the current game event on the Raspberry Pi.
-	"""
-
-	def __init__(self, parent, controller):
-		tk.Frame.__init__(self, master=parent)
-		self.controller = controller
-		self.text = tk.StringVar()
-		self.text1 = tk.StringVar()
-
-		self.text.set("Aktueller Spielzug:")
-		self.text1.set("")
-		self.label1 = tk.Label(self)
-		self.label1.configure(textvariable=self.text, font=(None, 24))
-		self.label1.place(x='130', y='80', anchor='center')
-		self.label2 = tk.Label(self)
-		self.label2.configure(textvariable=self.text1, font=(None, 35))
-		self.label2.place(x='160', y='130', anchor='center')
-
-	def update_information(self, msg):
-		"""
-		This method displays the current game event.
-
-		:param: msg: the current game event
-		"""
-		self.text1.set(msg)
-
 
 class GameSelector(tk.Frame):
 	"""
@@ -137,6 +114,7 @@ class GameSelector(tk.Frame):
 		game_font = tk.font.Font(size=18)
 		self.list = tk.Listbox(self, width=40, font=game_font, )
 		self.confirm_button = tk.Button(self, text="Spiel auswählen", command=self.return_game)
+		self.list.insert(0, *self.controller.main.games)
 		self.list.pack()
 		self.confirm_button.pack()
 
@@ -147,8 +125,10 @@ class GameSelector(tk.Frame):
 		global SELECTED_GAME
 		if tk.messagebox.askquestion("Question", "Sind Sie sicher, dass Sie dieses Spiel wählen wollen?") == 'yes':
 			SELECTED_GAME = self.list.get(self.list.curselection())
+			self.controller.iconify()
+			self.controller.destroy()
 		else:
-			tk.messagebox.showinfo("Information","Bitte wählen Sie ein anderes Spiel aus!")
+			tk.messagebox.showinfo("Information", "Bitte wählen Sie ein anderes Spiel aus!")
 
 	def set_games(self, games):
 		"""

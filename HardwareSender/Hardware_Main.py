@@ -2,7 +2,8 @@ from simple_rest_client.api import API
 from REST.ResourceHandler import ResourceHandler
 from REST.ConnectionHandler import ConnectionHandler
 from MQTT.MQTTPublisher import MQTTPublisher
-from GUI.GameGUI import GameGUI
+from GUI import GameGUI
+from GUI.GameGUI import GameGUI, GameSelector
 
 """
 This module is the entrypoint for the application, initializing all components and providing a reset method
@@ -30,9 +31,10 @@ class HardwareMain:
 		self.setup_connection_handler()
 		self.games = self.resource_handler.get_games()
 		self.resource_handler.check_for_lobby_game(self.games)
-		gui = GameGUI()
+		gui = GameGUI(self)
 		gui.mainloop()
-		publisher = MQTTPublisher(gui, self)
+		sel = gui.get_game()
+		publisher = MQTTPublisher(gui, self, self.connection_handler, self.resource_handler, sel)
 		publisher.start()
 
 	def setup_resource_handler(self):
