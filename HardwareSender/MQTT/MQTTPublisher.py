@@ -175,7 +175,6 @@ class MQTTPublisher(threading.Thread):
 		self.RestReceiver = self.generate_game()
 		self.informationDisplay = InformationDisplay()
 		self.informationDisplay.mainloop()
-		self.run()
 
 	def generate_game(self):
 		"""

@@ -46,11 +46,12 @@ class ConnectionHandler:
 		"""
 		while True:
 			try:
-				resp = requests.get(self.api_root_url)
+				resp = requests.get(self.api_root_url.strip("/v1")+"/swagger/index.html")
 				resp.raise_for_status()
 				return
 			except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
 				print("URL is not up. Please start the game-server!")
 			except requests.exceptions.HTTPError:
+				print(self.api_root_url.strip("/v1"))
 				print("HTTP Server Error! Please restart the Server!")
 			time.sleep(3)

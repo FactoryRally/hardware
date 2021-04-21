@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
-import time
+import os
 
 """
 This module is the UI which handles the whole game process. 
@@ -9,6 +9,8 @@ This module is the UI which handles the whole game process.
 
 SELECTED_GAME = ""
 
+if os.environ.get('DISPLAY', '') == '':
+	os.environ.__setitem__('DISPLAY', ':0.0')
 
 class GameGUI(tk.Tk):
 	"""

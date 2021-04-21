@@ -1,4 +1,9 @@
 import tkinter as tk
+import os
+
+if os.environ.get('DISPLAY', '') == '':
+	os.environ.__setitem__('DISPLAY', ':0.0')
+
 class InformationDisplay(tk.Tk):
 	"""
 	This class is used to display the current game event on the Raspberry Pi.
@@ -8,6 +13,7 @@ class InformationDisplay(tk.Tk):
 		super().__init__("FactoryRally")
 		self.text = tk.StringVar()
 		self.text1 = tk.StringVar()
+		super().geometry("640x320")
 
 		self.text.set("Aktueller Spielzug:")
 		self.text1.set("")
