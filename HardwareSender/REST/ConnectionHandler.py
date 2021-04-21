@@ -16,7 +16,6 @@ class ConnectionHandler:
 	def __init__(self, api):
 		"""
 		The init function takes the api as an argument and initiates the object.
-
 		:param api: an API instance
 		"""
 		self.api = api
@@ -24,7 +23,6 @@ class ConnectionHandler:
 	def wait_for_running_game(self, game_id, resource_handler):
 		"""
 		This function waits until a game is started.
-
 		:param game_id: the given game
 		:param resource_handler: the resource handler
 		"""

@@ -9,7 +9,7 @@ This module is the entrypoint for the application, initializing all components a
 for game end (new game start). 
 """
 
-api_root_url = "http://localhost:5050/"
+api_root_url = "http://localhost:5050/v1"
 
 
 class HardwareMain:
