@@ -4,6 +4,7 @@ The Hardware Interface is a MQTT Publisher as well as a ReST-Client consuming th
 * [Installation](setup.md)
 * [How to Use](howToUse.md)
 * [Development and Changes](changes.md)
+* [Documentation](HardwareSender/docs/build/FactoryRally-Receiver.pdf)
 
 ## MQTT Subscriber
 
