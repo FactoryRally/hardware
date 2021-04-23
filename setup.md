@@ -27,6 +27,7 @@ First you need to create a sh-script, which only executes the Python-script `Har
 touch FactoryRally.sh
 chmod u+x FactoryRally.sh
 echo "python3 FactoryRally.sh"
+```
 
 Now you need to create a service, which runs after a WIFI connection is established.
 
