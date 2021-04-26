@@ -10,15 +10,15 @@ class ConnectionHandler:
 	"""
 	This class handles the connection to the API and manages different possible errors as well as it performs checks.
 	"""
-	api_root_url = "http://localhost:5050/"
 	game_started = "PLAYING"
 
-	def __init__(self, api):
+	def __init__(self, api, api_root_url):
 		"""
 		The init function takes the api as an argument and initiates the object.
 		:param api: an API instance
 		"""
 		self.api = api
+		self.api_root_url = api_root_url
 
 	def wait_for_running_game(self, game_id, resource_handler):
 		"""

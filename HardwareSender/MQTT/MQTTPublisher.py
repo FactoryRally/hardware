@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 # library imports
 import threading
-import time
 from paho.mqtt import client as mqtt_client
 import random
 import time
 # Own module imports
-from GUI import GameGUI
-from GUI.GameGUI import GameSelector, GameStartPage
+from GUI.GameGUI import GameStartPage
 from GUI.InformationDisplay import InformationDisplay
 from REST.RESTClient import RestReceiver
 
@@ -15,7 +13,7 @@ from REST.RESTClient import RestReceiver
 This module is publishing the latest game event which can be performed by a real robot.
 """
 
-RELEVANT_ACTIONS = ["MOVEMENT_EVENT"]
+RELEVANT_ACTIONS = ["movement"]
 
 
 class MQTTPublisher(threading.Thread):
@@ -149,6 +147,7 @@ class MQTTPublisher(threading.Thread):
 					self.main.reset()
 				# evaluate if message should be send or just be displayed
 				if evaluate_relevance(msg) and not self.GAME_STOP:
+					self.informationDisplay.update_information(display_message(dict(msg)))
 					result = self.client.publish(curr_topic, str(msg))
 					result: [0, 1]
 					status = result[0]
@@ -193,9 +192,21 @@ def evaluate_relevance(msg):
 
 	:return: relevant or not
 	"""
+	print(dict(msg)["type"])
 	if dict(msg)["type"] in RELEVANT_ACTIONS:
 		return True
 	return False
+
+
+def display_message(msg):
+	"""
+	This function brings the message to a displayable form.
+
+	:param msg: current event
+
+	:return: event display message
+	"""
+	return "Movement: "+msg.get('entity')+msg.get('to').get('x')+msg.get('to').get('y')
 
 
 if __name__ == '__main__':

@@ -15,7 +15,6 @@ class InputIP(tk.Tk):
 		self.title("FactoryRally")
 		self.answer = None
 		super().geometry("640x320")
-
 		self.text.set("Bitte gegen Sie die IP-Adresse vom Spielserver ein:")
 		self.label1 = tk.Label(self)
 		self.label1.configure(textvariable=self.text, font=(None, 12))
@@ -26,10 +25,6 @@ class InputIP(tk.Tk):
 		self.button.place(x='240', y='170', anchor='center')
 
 	def choose_ip(self):
-		"""
-		This method
-		:return:
-		"""
 		self.answer = self.entry2.get()
 		self.iconify()
 		self.destroy()

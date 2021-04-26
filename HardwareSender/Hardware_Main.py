@@ -5,12 +5,21 @@ from REST.ResourceHandler import ResourceHandler
 from REST.ConnectionHandler import ConnectionHandler
 from MQTT.MQTTPublisher import MQTTPublisher
 from GUI import GameGUI
-from GUI.GameGUI import GameGUI, GameSelector
+from GUI.GameGUI import GameGUI
 
 """
 This module is the entrypoint for the application, initializing all components and providing a reset method
 for game end (new game start). 
 """
+
+
+def make_ip_functional(ip):
+	"""
+	This
+	:param ip:
+	:return:
+	"""
+	return "http://"+ip+":5050/v1"
 
 
 class HardwareMain:
@@ -26,12 +35,11 @@ class HardwareMain:
 		"""
 		IPInput = InputIP()
 		IPInput.mainloop()
-		api_root_url = self.make_ip_functional(IPInput.answer)
-		print(api_root_url)
+		api_root_url = make_ip_functional(IPInput.answer)
 		self.api = API(api_root_url=api_root_url, json_encode_body=True)
-		self.resource_handler = ResourceHandler(self.api)
+		self.resource_handler = ResourceHandler(self.api, api_root_url)
 		self.setup_resource_handler()
-		self.connection_handler = ConnectionHandler(self.api)
+		self.connection_handler = ConnectionHandler(self.api, api_root_url)
 		self.setup_connection_handler()
 		self.games = self.resource_handler.get_games()
 		self.resource_handler.check_for_lobby_game(self.games)
@@ -53,9 +61,6 @@ class HardwareMain:
 		"""
 		self.connection_handler.wait_for_api_availability()
 		self.connection_handler.wait_for_initialized_game()
-
-	def make_ip_functional(self, ip):
-		return "http://"+ip+":5050/v1"
 
 
 if __name__ == '__main__':

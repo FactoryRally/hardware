@@ -76,12 +76,12 @@ class GameStartPage(tk.Frame):
 		tk.Frame.__init__(self, master=parent)
 		self.controller = controller
 		self.text = tk.StringVar()
-		self.text.set("Ist ein Spiel gestartet?")
+		self.text.set("Bitte warten Sie bis zumindest ein Spiel gestartet ist.")
 		self.label1 = tk.Label(self)
-		self.label1.configure(textvariable=self.text, font=(None, 24))
-		self.label1.place(x='130', y='80', anchor='center')
+		self.label1.configure(textvariable=self.text, font=(None, 12))
+		self.label1.place(x='240', y='80', anchor='center')
 		self.button = tk.Button(self, text='Ein Spiel ist gestartet!', command=self.button_click)
-		self.button.place(x='320', y='220', anchor='center')
+		self.button.place(x='240', y='150', anchor='center')
 
 
 	def button_click(self):
@@ -105,6 +105,7 @@ class GameStartPage(tk.Frame):
 			return self.ACTIVE
 		return False
 
+
 class GameSelector(tk.Frame):
 	"""
 	This class provides a simple interface for the user to choose a game.
@@ -113,7 +114,7 @@ class GameSelector(tk.Frame):
 	def __init__(self, parent, controller):
 		tk.Frame.__init__(self, master=parent)
 		self.controller = controller
-		game_font = tk.font.Font(size=18)
+		game_font = tk.font.Font(size=12)
 		self.list = tk.Listbox(self, width=40, font=game_font, )
 		self.confirm_button = tk.Button(self, text="Spiel auswählen", command=self.return_game)
 		self.list.insert(0, *self.controller.main.games)

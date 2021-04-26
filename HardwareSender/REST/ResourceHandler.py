@@ -13,12 +13,13 @@ class ResourceHandler:
 	This class provides functions for interaction with the API resources.
 	"""
 
-	def __init__(self, api):
+	def __init__(self, api, api_root_url):
 		"""
 		The init function takes the api as an argument and initiates the object.
 		:param api: the API
 		"""
 		self.api = api
+		self.api_root_url = api_root_url
 		self.add_resources()
 
 	def add_resources(self):
