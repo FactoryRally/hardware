@@ -1,8 +1,10 @@
 # Hardware Interface
 The Hardware Interface is a MQTT Publisher as well as a ReST-Client consuming the [Game Controller](https://github.com/FactoryRally/game-controller).
 
-* [Installation and Setup](setup.md)
+* [Installation](setup.md)
+* [How to Use](howToUse.md)
 * [Development and Changes](changes.md)
+* [Documentation](HardwareSender/docs/build/FactoryRally-Receiver.pdf)
 
 ## MQTT Subscriber
 
