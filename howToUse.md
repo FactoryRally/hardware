@@ -12,6 +12,27 @@ First the IP of the Game Server needs to be entered like `xxx.xxx.xxx.xxx`, no p
 
 Then a game needs to be in `LOBBY` state, so the consumer can resister. When you have chosen a game, the game can be started through the host.
 
+## Run as a Service
+
+You can run the Python application as Service, which gets executed as soon as the Pi has an active WIFI-connection.
+
+First you need to create a *.sh* file, which only executes the Python file.
+
+```
+python3 Hardware_Main.py
+
+Now you need to create a service `sudo systemctl edit --force --full FactoryRally.service`, which contains:
+
+```
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi
+ExecStart=/home/pi/script.sh
+ExecStartPre=/bin/sh -c 'until ping -c1 google.com; do sleep 1; done;'
+```
+
+
 # MQTT-Subscriber
 
 The Subscriber need to be started in or before `Lobby` state (later is not possible due to API restrictions). 
