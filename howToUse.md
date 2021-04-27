@@ -20,6 +20,7 @@ First you need to create a *.sh* file, which only executes the Python file.
 
 ```
 python3 Hardware_Main.py
+```
 
 Now you need to create a service `sudo systemctl edit --force --full FactoryRally.service`, which contains:
 
@@ -31,7 +32,9 @@ WorkingDirectory=/home/pi
 ExecStart=/home/pi/script.sh
 ExecStartPre=/bin/sh -c 'until ping -c1 google.com; do sleep 1; done;'
 ```
+Next the service should be enabled `sudo systemctl enable my_script.service`. 
 
+After a restart, the service should be started. 
 
 # MQTT-Subscriber
 
