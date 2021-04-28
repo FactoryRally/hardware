@@ -15,3 +15,12 @@ if event_type == "MovementEvent":
     print(f"perform_movement({msg_decoded.get('entity')}, {msg_decoded.get('direction')}, "
           f"{msg_decoded.get('rotation')}, {msg_decoded.get('rotation-times')}, {msg_decoded.get('to').get('x')},"
           f" {msg_decoded.get('to').get('y')}")
+```
+
+# Game Scan
+
+Currently there is no Game scan due to the usage of the `simple_api_rest` library. This is a comfort change which should be added in the future.
+
+# Terminal output
+
+Currently there is no terminal output, which explains what needs to be done now. This should be easily achieveable through change the service.
