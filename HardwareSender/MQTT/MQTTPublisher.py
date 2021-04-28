@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # library imports
-import threading
 from paho.mqtt import client as mqtt_client
 import random
 import time
+import threading
 # Own module imports
 from GUI.GameGUI import GameStartPage
 from GUI.InformationDisplay import InformationDisplay
@@ -16,7 +16,7 @@ This module is publishing the latest game event which can be performed by a real
 RELEVANT_ACTIONS = ["movement"]
 
 
-class MQTTPublisher(threading.Thread):
+class MQTTPublisher:
 	"""
 	This class is the MQTT Sender which pushes the current game event
 	to the broker with the according topic.
@@ -60,9 +60,9 @@ class MQTTPublisher(threading.Thread):
 		This method starts the discover process, after that starts the client loop
 		and publishing.
 		"""
+		self.client.loop_start()
 		self.discover_and_notify()
 		self.publish()
-		self.client.loop_forever()
 
 	def connect_mqtt(self):
 		"""
@@ -105,6 +105,7 @@ class MQTTPublisher(threading.Thread):
 			"""
 
 			msg_decoded = str(msg.payload.decode())
+			print(msg_decoded)
 			# when a message on general topic no mapping is needed
 			if msg.topic == self.GEN_TOPIC:
 				print(f"[{self.game}]: Received message on general: {msg_decoded}")
@@ -112,7 +113,8 @@ class MQTTPublisher(threading.Thread):
 				# perform mapping
 				if not msg_decoded.__contains__('type') and self.SETUP is False:
 					print(f"[{self.game}]: Received `{msg_decoded}` from `{msg.topic}` topic")
-					self.topics.append(eval(msg.payload.decode())[2])
+					topic = str(eval(msg.payload.decode()))
+					self.topics.append(topic[topic.rindex(':')+2:topic.__len__()])
 					helper_topic = 1
 					if self.RestReceiver.get_controlled_entities() == len(self.topics):
 						for x in self.topics:
@@ -123,11 +125,15 @@ class MQTTPublisher(threading.Thread):
 					self.SETUP = True
 					self.ACTIVE = True
 
-		self.client.subscribe(self.GEN_TOPIC)
+		self.client.subscribe("discover")
+		self.client.subscribe("general")
 		self.client.on_message = on_message
 		# wait until all robots have connected and received topic
+		time.sleep(5)
 		while self.RestReceiver.get_controlled_entities() != len(self.topics):
-			continue
+			print("Waiting for clients")
+			print(self.topics)
+			time.sleep(5)
 
 	def publish(self):
 		"""
@@ -173,6 +179,7 @@ class MQTTPublisher(threading.Thread):
 		"""
 		self.RestReceiver = self.generate_game()
 		self.informationDisplay = InformationDisplay()
+		self.informationDisplay.after(0, self.run)
 		self.informationDisplay.mainloop()
 
 	def generate_game(self):

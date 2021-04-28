@@ -14,7 +14,7 @@ def execute_command(msg, event_type):
     :param: event_type: the given event type
     """
     msg_decoded = dict(msg)
-    if event_type == "MovementEvent":
+    if event_type == "movement":
         print(f"perform_movement({msg_decoded.get('entity')}, {msg_decoded.get('direction')}, "
               f"{msg_decoded.get('rotation')}, {msg_decoded.get('rotation-times')}, {msg_decoded.get('to').get('x')},"
               f" {msg_decoded.get('to').get('y')}")
@@ -26,7 +26,7 @@ class MQTTReceiver:
     receives and handles the transmitted data.
     """
 
-    broker = 'ip-address'
+    broker = 'broker.emqx.io'
     port = 1883
     discover_topic = "discover"
     topic = ""

@@ -82,6 +82,8 @@ class ResourceHandler:
 			return self.api.games.get_game_status(game_id).body["state"]
 		except NotFoundError:
 			print(f"[{game_id}]: GAME not found")
+		except ServerError:
+			print(f"[{game_id}]: GAME finished")
 
 	def create_consumer(self, game_id):
 		"""

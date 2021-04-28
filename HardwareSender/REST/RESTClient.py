@@ -40,6 +40,7 @@ class RestReceiver:
 		self.game_id = game_id
 		# get consumer
 		self.user_token = quote(str(self.resource_handler.create_consumer(self.game_id)["pat"]))
+		print(self.user_token)
 		if self.resource_handler.get_game_state(self.game_id) != self.PLAYING_STATE:
 			self.connection_handler.wait_for_running_game(self.game_id, self.resource_handler)
 		self.players = self.resource_handler.get_players(self.game_id, self.user_token)

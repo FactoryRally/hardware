@@ -77,7 +77,7 @@ class GameStartPage(tk.Frame):
 		tk.Frame.__init__(self, master=parent)
 		self.controller = controller
 		self.text = tk.StringVar()
-		self.text.set("Bitte warten Sie bis zumindest ein Spiel gestartet ist.")
+		self.text.set("Bitte warten Sie bis zumindest ein Spiel erstellt wurde.")
 		self.label1 = tk.Label(self)
 		self.label1.configure(textvariable=self.text, font=(None, 12))
 		self.label1.place(x='240', y='80', anchor='center')
