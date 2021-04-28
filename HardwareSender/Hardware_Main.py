@@ -1,6 +1,7 @@
 from simple_rest_client.api import API
 
 from GUI.InputIP import InputIP
+from NetworkUtilities.GameScan import check_subnet_for_open_port
 from REST.ResourceHandler import ResourceHandler
 from REST.ConnectionHandler import ConnectionHandler
 from MQTT.MQTTPublisher import MQTTPublisher
@@ -33,12 +34,11 @@ class HardwareMain:
 		This init method initiates the main class which provides the access to the REST API and
 		generates a MQTT Publisher instance.
 		"""
-		IPInput = InputIP()
-		IPInput.mainloop()
-		api_root_url = make_ip_functional(IPInput.answer)
-
-
-
+		ips = check_subnet_for_open_port()
+		print(ips)
+		ipInput = InputIP(ips)
+		ipInput.mainloop()
+		api_root_url = make_ip_functional(ipInput.ip)
 		self.api = API(api_root_url=api_root_url, json_encode_body=True)
 		self.resource_handler = ResourceHandler(self.api, api_root_url)
 		self.setup_resource_handler()
