@@ -12,6 +12,7 @@ SELECTED_GAME = ""
 if os.environ.get('DISPLAY', '') == '':
 	os.environ.__setitem__('DISPLAY', ':0.0')
 
+
 class GameGUI(tk.Tk):
 	"""
 	This class provides a simple interface for the user to choose a game.

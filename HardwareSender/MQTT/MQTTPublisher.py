@@ -10,7 +10,7 @@ from GUI.InformationDisplay import InformationDisplay
 from REST.RESTClient import RestReceiver
 
 """
-This module is publishing the latest game event which can be performed by a real robot.
+This module is publishing the latest game event which can be performed by a real robot to the MQTT broker.
 """
 
 RELEVANT_ACTIONS = ["movement"]

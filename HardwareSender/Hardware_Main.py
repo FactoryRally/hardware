@@ -36,6 +36,9 @@ class HardwareMain:
 		IPInput = InputIP()
 		IPInput.mainloop()
 		api_root_url = make_ip_functional(IPInput.answer)
+
+
+
 		self.api = API(api_root_url=api_root_url, json_encode_body=True)
 		self.resource_handler = ResourceHandler(self.api, api_root_url)
 		self.setup_resource_handler()
