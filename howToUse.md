@@ -1,5 +1,15 @@
 # MQTT-Publisher
 
+## MQTT-Broker
+
+In general there are two possibilities for MQTT-Broker:
+1. online brokers -> just change the `broker` attribute in the `MQTTPublisher.py` 
+2. Mosquitto (installed on the delivered Pi)
+
+Basically this is solved using the online brokers so the user doesn't need to interfere with the source code. 
+
+## Run the application
+
 First you have to connect to the WLAN, in which the game server is also running. 
 
 If everything is installed, the application can be launched by
