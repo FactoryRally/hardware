@@ -28,7 +28,7 @@ class ConnectionHandler:
 		"""
 		while resource_handler.get_game_state(game_id) != self.game_started:
 			print(f"[{game_id}]: Game has not started yet!")
-			time.sleep(3)
+			time.sleep(5)
 		return
 
 	def wait_for_initialized_game(self):
@@ -37,7 +37,7 @@ class ConnectionHandler:
 		"""
 		while not self.api.games.get_games().body:
 			print("No game has been initialized")
-			time.sleep(3)
+			time.sleep(5)
 		return
 
 	def wait_for_api_availability(self):
@@ -54,4 +54,4 @@ class ConnectionHandler:
 			except requests.exceptions.HTTPError:
 				print(self.api_root_url.strip("/v1"))
 				print("HTTP Server Error! Please restart the Server!")
-			time.sleep(3)
+			time.sleep(5)

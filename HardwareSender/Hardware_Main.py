@@ -1,5 +1,4 @@
 from simple_rest_client.api import API
-
 from GUI.InputIP import InputIP
 from NetworkUtilities.GameScan import check_subnet_for_open_port
 from REST.ResourceHandler import ResourceHandler
@@ -16,9 +15,9 @@ for game end (new game start).
 
 def make_ip_functional(ip):
 	"""
-	This
-	:param ip:
-	:return:
+	This function converts the selected ip into a correct format.
+	:param ip: the ip to be converted
+	:return: correctly formatted ip
 	"""
 	return "http://"+ip+":5050/v1"
 
@@ -34,7 +33,10 @@ class HardwareMain:
 		This init method initiates the main class which provides the access to the REST API and
 		generates a MQTT Publisher instance.
 		"""
-		api_root_url = make_ip_functional("192.168.0.132")
+		ips = check_subnet_for_open_port()
+		ipInput = InputIP(ips)
+		ipInput.mainloop()
+		api_root_url = make_ip_functional(ipInput.ip)
 		self.api = API(api_root_url=api_root_url, json_encode_body=True)
 		self.resource_handler = ResourceHandler(self.api, api_root_url)
 		self.setup_resource_handler()

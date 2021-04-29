@@ -154,7 +154,7 @@ class MQTTPublisher:
 					self.main.reset()
 				if str(msg).__contains__("game start"):
 					self.informationDisplay.update_information(dict(msg)['type'])
-					self.client.publish(self.GEN_TOPIC, msg)
+					self.client.publish(self.GEN_TOPIC, str(msg))
 				# evaluate if message should be send or just be displayed
 				if evaluate_relevance(msg) and not self.GAME_STOP:
 					self.informationDisplay.update_information(display_message(dict(msg)))
