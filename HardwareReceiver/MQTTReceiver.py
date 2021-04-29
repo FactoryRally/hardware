@@ -85,6 +85,7 @@ class MQTTReceiver:
             print(f"Failed to send message to {self.discover_topic}")
         self.client.unsubscribe(self.discover_topic)
         self.client.subscribe(self.general_topic)
+        print(self.client_id)
         self.client.subscribe(self.client_id)
 
     def subscribe(self):

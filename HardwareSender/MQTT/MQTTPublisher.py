@@ -116,21 +116,22 @@ class MQTTPublisher:
 					topic = str(eval(msg.payload.decode()))
 					self.topics.append(topic[topic.rindex(':')+2:topic.__len__()])
 					helper_topic = 1
-					if self.RestReceiver.get_controlled_entities() == len(self.topics):
+					if len(self.RestReceiver.get_controlled_entities()) == len(self.topics):
 						for x in self.topics:
 							self.ids.append(helper_topic)
 							helper_topic += 1
 							print(f"[{self.game}]: {helper_topic}")
 							client.publish(x, {"Your client topic is": str(helper_topic)}.__str__())
-					self.SETUP = True
-					self.ACTIVE = True
+						self.SETUP = True
+						self.ACTIVE = True
+
 
 		self.client.subscribe("discover")
 		self.client.subscribe("general")
 		self.client.on_message = on_message
 		# wait until all robots have connected and received topic
 		time.sleep(5)
-		while self.RestReceiver.get_controlled_entities() != len(self.topics):
+		while len(self.RestReceiver.get_controlled_entities()) != len(self.topics):
 			print("Waiting for clients")
 			print(self.topics)
 			time.sleep(5)
@@ -151,6 +152,8 @@ class MQTTPublisher:
 					self.GAME_STOP = True
 					self.ui.show_frame(self.ui.frames[GameStartPage])
 					self.main.reset()
+				if str(msg).__contains__("game start"):
+					self.informationDisplay.update_information(dict(msg)['type'])
 				# evaluate if message should be send or just be displayed
 				if evaluate_relevance(msg) and not self.GAME_STOP:
 					self.informationDisplay.update_information(display_message(dict(msg)))
@@ -179,8 +182,7 @@ class MQTTPublisher:
 		"""
 		self.RestReceiver = self.generate_game()
 		self.informationDisplay = InformationDisplay()
-		self.informationDisplay.after(0, self.run)
-		self.informationDisplay.mainloop()
+		self.run()
 
 	def generate_game(self):
 		"""

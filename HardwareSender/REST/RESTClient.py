@@ -71,6 +71,7 @@ class RestReceiver:
 		if self.resource_handler.get_game_state(self.game_id):
 			try:
 				msg = self.resource_handler.get_event_head(self.game_id, self.user_token)
+				print(msg)
 				if msg is None:
 					print(f"[{self.game_id}]: No Message available!")
 					return None
@@ -113,7 +114,7 @@ def check_if_event_is_action(msg):
 
 	:return: returns whether or not the event is an action with entity
 	"""
-	return not dict(msg).__contains__('entityID')
+	return dict(msg).__contains__('entityID')
 
 
 if __name__ == '__main__':
