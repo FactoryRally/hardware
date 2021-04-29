@@ -65,6 +65,9 @@ class GameGUI(tk.Tk):
 	def get_game(self):
 		return SELECTED_GAME
 
+	def set_games(self, games):
+		self.frames[GameSelector].list.insert(0,*games)
+
 
 class GameStartPage(tk.Frame):
 	"""
@@ -84,13 +87,13 @@ class GameStartPage(tk.Frame):
 		self.button = tk.Button(self, text='Ein Spiel ist erstellt', command=self.button_click)
 		self.button.place(x='240', y='150', anchor='center')
 
-
 	def button_click(self):
 		"""
 		This method sets the parameter active to true if a game is running
 		according to user input.
 		"""
 		self.ACTIVE = True
+		self.controller.frames[GameSelector].list.insert(0, *self.controller.main.resource_handler.get_games())
 		self.controller.show_frame(GameSelector)
 
 	def get_state(self):
@@ -118,7 +121,6 @@ class GameSelector(tk.Frame):
 		game_font = tk.font.Font(size=12)
 		self.list = tk.Listbox(self, width=40, font=game_font, )
 		self.confirm_button = tk.Button(self, text="Spiel auswählen", command=self.return_game)
-		self.list.insert(0, *self.controller.main.games)
 		self.list.pack()
 		self.confirm_button.pack()
 

@@ -42,10 +42,10 @@ class HardwareMain:
 		self.setup_resource_handler()
 		self.connection_handler = ConnectionHandler(self.api, api_root_url)
 		self.setup_connection_handler()
-		self.games = self.resource_handler.get_games()
-		self.resource_handler.check_for_lobby_game(self.games)
 		self.gui = GameGUI(self)
 		self.gui.mainloop()
+		self.games = self.resource_handler.get_games()
+		self.resource_handler.check_for_lobby_game(self.games)
 		sel = self.gui.get_game()
 		MQTTPublisher(self.gui, self, self.connection_handler, self.resource_handler, sel)
 

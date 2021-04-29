@@ -31,7 +31,13 @@ def get_own_ip():
     Get the own IP, even without internet connection.
     From https://stackoverflow.com/a/1267524
     """
-    return ((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0])
+    # LINUX AKA RASPBERRY PI
+    import os
+    ipv4 = os.popen('ip addr show wlan0').read().split("inet ")[1].split("/")[0]
+    return ipv4
+
+    # MAC OS
+    # return ((([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")] or [[(s.connect(("8.8.8.8", 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]]) + ["no IP found"])[0])
 
 
 def check_subnet_for_open_port(timeout=15.0):
