@@ -46,6 +46,8 @@ Next the service should be enabled `sudo systemctl enable my_script.service`.
 
 After a restart, the service should be started. 
 
+*The service is behaving weird in some networks, as it may show no ip. In that case, just start the game from the .sh from the desktop per double-click.*
+
 # MQTT-Subscriber
 
 The Subscriber need to be started in or before `Lobby` state (later is not possible due to API restrictions). 
