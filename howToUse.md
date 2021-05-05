@@ -50,7 +50,7 @@ After a restart, the service should be started.
 
 # MQTT-Subscriber
 
-The Subscriber need to be started in or before `Lobby` state (later is not possible due to API restrictions). 
+The Subscriber needs to be started in or before `Lobby` state (later is not possible due to API restrictions). 
 
 ```
 python3 MQTTReceiver.py
